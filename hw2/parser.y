@@ -8,7 +8,8 @@
   char* stringval;
 }
 /* op */
-%token<stringval> INC DEC LESS_OR_EQUAL_THAN GREATER_OR_EQUAL_THAN SHIFT_LEFT SHIFT_RIGHT EQUAL NOT_EQUAL AND OR ADD MINUS MULTIPLY DIVIDE MOD LOGICAL_NOT BITWISE_NOT LESS_THAN GREATER_THAN AND_OP OR_OP XOR_OP ASSIGN 
+%token<stringval> INC DEC LESS_OR_EQUAL_THAN GREATER_OR_EQUAL_THAN SHIFT_LEFT SHIFT_RIGHT EQUAL NOT_EQUAL AND OR ADD MINUS 
+%token<stringval> MULTIPLY DIVIDE MOD LOGICAL_NOT BITWISE_NOT LESS_THAN GREATER_THAN AND_OP OR_OP XOR_OP ASSIGN 
 %right ASSIGN
 %left OR
 %left AND
@@ -20,6 +21,8 @@
 %left SHIFT_LEFT SHIFT_RIGHT
 %left ADD MINUS
 %left MULTIPLY DIVIDE MOD
+%nonassoc UMINUS UADD UMULTI UANDOP
+%nonassoc INCPOST DECPOST
 /* keyword */
 %token IF ELSE SWITCH CASE DEFAULT WHILE DO FOR RETURN BREAK CONTINUE
 /* punc */
@@ -31,7 +34,7 @@
 /* statement */
 %type<stringval> statement_declaration_list compound_statement return_statement continue_statement break_statement jump_statement emptiable_expression
 %type<stringval> for_statement do_while_statement while_statement iteration_statement statement_list switch_clause switch_clause_list
-%type<stringval> switch_statement if_statement emptiable_statement_declaration_list selection_statement expression_statement statement
+%type<stringval> switch_statement if_statement selection_statement expression_statement statement
 /* declaration */
 %token<stringval> INT CHAR FLOAT DOUBLE VOID SIGNED UNSIGNED LONG SHORT CONST
 %type<stringval> declaration declaration_specifiers  type_specifier 
@@ -467,13 +470,13 @@ specifier_qualifier_list
 
 suffix_expression
     : primary_expression { $$ = $1;}
-    | suffix_expression INC                                 {  
+    | suffix_expression INC  %prec INCPOST     {  
         int len1 = strlen($1);
         $$ = (char*) malloc(sizeof(char)*(len1+3));
         strcat($$,$1);
         strcat($$,"++");
     }
-    | suffix_expression DEC                                  { 
+    | suffix_expression DEC   %prec DECPOST       { 
         int len1 = strlen($1);
         $$ = (char*) malloc(sizeof(char)*(len1+3));
         strcat($$,$1);
@@ -518,13 +521,13 @@ prefix_expression
         strcat($$,"--");
         strcat($$,$2);
     }
-    | ADD prefix_expression              { 
+    | ADD prefix_expression %prec UADD  { 
         int len1 = strlen($2);
         $$ = (char*) malloc(sizeof(char)*(len1+3));
         strcat($$,"+");
         strcat($$,$2);
     }
-    | MINUS prefix_expression              { 
+    | MINUS prefix_expression  %prec UMINUS    { 
         int len1 = strlen($2);
         $$ = (char*) malloc(sizeof(char)*(len1+3));
         strcat($$,"-");
@@ -542,13 +545,13 @@ prefix_expression
         strcat($$,"~");
         strcat($$,$2);
     }
-    | MULTIPLY prefix_expression              { 
+    | MULTIPLY prefix_expression  %prec UMULTI  { 
         int len1 = strlen($2);
         $$ = (char*) malloc(sizeof(char)*(len1+3));
         strcat($$,"*");
         strcat($$,$2);
     }
-    | AND_OP prefix_expression              { 
+    | AND_OP prefix_expression   %prec UANDOP { 
         int len1 = strlen($2);
         $$ = (char*) malloc(sizeof(char)*(len1+3));
         strcat($$,"&");
@@ -802,29 +805,22 @@ selection_statement
     ;
 
 if_statement
-    : IF L_BRACKET expression R_BRACKET L_PARENTHESIS emptiable_statement_declaration_list R_PARENTHESIS { 
-        $$ = (char*) malloc (sizeof(char) * (50+strlen($3)+strlen($6)));
+    : IF L_BRACKET expression R_BRACKET compound_statement { 
+        $$ = (char*) malloc (sizeof(char) * (50+strlen($3)+strlen($5)));
         strcat($$,"if(");
         strcat($$,$3);
-        strcat($$,"){");
-        strcat($$,$6);
-        strcat($$,"}");
+        strcat($$,")");
+        strcat($$,$5);
     }
-    | IF L_BRACKET expression R_BRACKET L_PARENTHESIS emptiable_statement_declaration_list R_PARENTHESIS ELSE L_PARENTHESIS emptiable_statement_declaration_list R_PARENTHESIS {
-        $$ = (char*) malloc (sizeof(char) * (50+strlen($3)+strlen($10)+strlen($6)));
+    | IF L_BRACKET expression R_BRACKET compound_statement ELSE compound_statement {
+        $$ = (char*) malloc (sizeof(char) * (50+strlen($3)+strlen($7)+strlen($5)));
         strcat($$,"if(");
         strcat($$,$3);
-        strcat($$,"){");
-        strcat($$,$6);
-        strcat($$,"}else{");
-        strcat($$,$10);
-        strcat($$,"}");
+        strcat($$,")");
+        strcat($$,$5);
+        strcat($$,"else");
+        strcat($$,$7);
     }
-    ;
-
-emptiable_statement_declaration_list
-    : /* empty */                   {  }
-    | statement_declaration_list { $$ = $1;}
     ;
 
 switch_statement
@@ -879,11 +875,18 @@ switch_clause
     ;
 
 statement_list
-    : statement { $$ = $1;}
+    : statement { 
+        $$ = (char*) malloc(sizeof(char) * (strlen($1)+30));
+        strcat($$,"<stmt>");
+        strcat($$, $1);
+        strcat($$,"</stmt>");
+    }
     | statement statement_list  { 
-        $$ = (char*) malloc (sizeof(char) * (5+strlen($2)+strlen($1)));
-        strcat($$,$1);
-        strcat($$,$2);
+        $$ = (char*) malloc(sizeof(char) * (strlen($1)+strlen($2)+30));
+        strcat($$,"<stmt>");
+        strcat($$, $1);
+        strcat($$,"</stmt>");
+        strcat($$, $2);
     }
     ;
 
