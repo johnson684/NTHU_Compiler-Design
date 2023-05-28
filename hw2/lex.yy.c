@@ -1098,24 +1098,24 @@ YY_RULE_SETUP
 case 55:
 YY_RULE_SETUP
 #line 68 "scanner.l"
-{yylval.stringval = strdup(yytext); return LITERAL;} // int
+{yylval.intval = atoi(yytext); return INT_LITERAL;} // int
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
 #line 69 "scanner.l"
-{yylval.stringval = strdup(yytext); return LITERAL;} // float
+{yylval.dval = atof(yytext); return FLOAT_LITERAL;} // float
 	YY_BREAK
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
 #line 70 "scanner.l"
-{yylval.stringval = strdup(yytext); return LITERAL; } // char
+{yylval.stringval = strdup(yytext); return CHAR_LITERAL; } // char
 	YY_BREAK
 case 58:
 /* rule 58 can match eol */
 YY_RULE_SETUP
 #line 71 "scanner.l"
-{yylval.stringval = strdup(yytext); return LITERAL; } // str
+{yylval.stringval = strdup(yytext); return STRING_LITERAL; } // str
 	YY_BREAK
 case 59:
 YY_RULE_SETUP

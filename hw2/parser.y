@@ -40,7 +40,10 @@
 %type<stringval> func_init_declarator_list 
 /* universal */
 %type<stringval> function_definition trans_unit extern_decl func_init_declarator func_declarator func_direct_declarator array_init_declarator_list array_init_declarator array_declarator array_content array_expression
-%token<stringval> IDENTIFIER LITERAL
+%token<stringval> IDENTIFIER CHAR_LITERAL STRING_LITERAL
+%token<intval> INT_LITERAL
+%token<dval> FLOAT_LITERAL
+%type<stringval> LITERAL
 %start program
 %%
 /* declaration */
@@ -124,6 +127,22 @@ type_specifier
     | UNSIGNED
     | LONG
     | SHORT
+    ;
+LITERAL:
+      INT_LITERAL {
+        $$ = (char*) malloc (sizeof(char) * (100));
+        sprintf($$,"%d",$1);
+      }
+    | FLOAT_LITERAL {
+        $$ = (char*) malloc (sizeof(char) * (100));
+        sprintf($$,"%f",$1);
+    }
+    | CHAR_LITERAL {
+        $$ = $1;
+    }
+    | STRING_LITERAL {
+        $$ = $1;
+    }
     ;
 /* scalar */
 scalar_decl : declaration_specifiers scalar_init_declarator_list SEMICOLON{
