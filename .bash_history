@@ -411,3 +411,74 @@ git add --all
 git commit -m "replace sign int by signless int"
 git push origin master
 make test
+cd /home/cd23p069/hw2/
+golden_parser < test.c
+parser < test.c
+make test
+parser < test.c
+golden_parser < test.c
+golden_parser
+golden_parser < test.c
+parser < test.c
+make test
+golden_parser < test.c
+make test
+git add -A
+git commit -m "bugs"
+git push
+make test
+make clean
+make test
+golden_parser < test.c
+make clean
+make test
+golden_parser < test.c
+make test
+golden_parser < test.c
+make test
+golden_parser
+cd hw2
+
+golden_parser < test.c
+make clean
+make
+make test
+make clean
+make test
+make clean
+make
+make test
+golden_parser < test.c
+make test
+./parser < test.c
+make clean
+make
+make test
+golden_parser < test.c
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make clean
+make test
+golden_parser < test.txt
+make cleam
+make clean
+make test
+make clean
+make
+make test
+golden_parser < test.txt
+make clean
+make test
+golden_parser < test.txt
+make clean
+make test
+make clean
+make test
+golden_parser < test.txt
+make clean
+make test
+golden_parser < test.txt
+make clean
+make test
+golden_parser < test.txt

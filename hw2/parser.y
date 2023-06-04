@@ -43,7 +43,7 @@
 %type<stringval> func_init_declarator_list 
 /* universal */
 %type<stringval> function_definition trans_unit extern_decl func_init_declarator func_declarator func_direct_declarator array_init_declarator_list array_init_declarator array_declarator array_content array_expression
-%token<stringval> IDENTIFIER CHAR_LITERAL STRING_LITERAL
+%token<stringval> IDENTIFIER CHAR_LITERAL STRING_LITERAL NL
 %token<intval> INT_LITERAL
 %token<dval> FLOAT_LITERAL
 %type<stringval> LITERAL
@@ -152,11 +152,11 @@ scalar_decl : declaration_specifiers scalar_init_declarator_list SEMICOLON{
     int len1 = strlen($1);
     int len2 = strlen($2);
     $$= (char*)malloc((len1+len2+30)*sizeof(char)+1);
-    strcat($$, "<scal_decl>");
+    strcat($$, "<scalar_decl>");
     strcat($$, $1);
     strcat($$, $2);
     strcat($$, ";");
-    strcat($$,"</scal_decl>");
+    strcat($$,"</scalar_decl>");
 }
 ;
 
@@ -366,6 +366,16 @@ array_content
         strcat($$,$4);
         strcat($$,"}");
     }
+    | L_PARENTHESIS array_content COMMA array_expression R_PARENTHESIS {
+        int len1 = strlen($2);
+        int len2 = strlen($4);
+        $$= (char*)malloc((len1+len2+4)*sizeof(char)+1);
+        strcat($$, "{");
+        strcat($$,$2);
+        strcat($$,",");
+        strcat($$,$4);
+        strcat($$,"}");
+    }
     | L_PARENTHESIS array_content R_PARENTHESIS {
         int len1 = strlen($2);
         $$= (char*)malloc((len1+3)*sizeof(char)+1);
@@ -380,10 +390,12 @@ array_expression
     | array_expression COMMA expression {
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+2)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        //strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, ",");
         strcat($$, $3);
+        //strcat($$,"</expr>");
     }
     ;
 /* array */
@@ -391,15 +403,37 @@ array_expression
 /* expression */
 // highest precedence, should not be separated
 primary_expression
-    : IDENTIFIER  { $$ = $1;}
-    | LITERAL     { $$ = $1;}
+    : IDENTIFIER  {
+        int len1 = strlen($1);
+        $$= (char*)malloc((len1+15)*sizeof(char)+1);
+        strcat($$,"<expr>");
+        strcat($$, $1);
+        strcat($$,"</expr>");
+    }
+    | LITERAL     { 
+        int len1 = strlen($1);
+        $$= (char*)malloc((len1+15)*sizeof(char)+1);
+        strcat($$,"<expr>");
+        strcat($$, $1);
+        strcat($$,"</expr>");
+    }
     | L_BRACKET expression R_BRACKET    { 
         int len1 = strlen($2);
-        $$= (char*)malloc((len1+4)*sizeof(char)+1);
+        $$= (char*)malloc((len1+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$,"(");
         strcat($$, $2);
         strcat($$, ")");
+        strcat($$,"</expr>");
     }
+    | NL {
+        int len1 = strlen($1);
+        $$= (char*)malloc((len1+15)*sizeof(char)+1);
+        strcat($$,"<expr>");
+        strcat($$, $1);
+        strcat($$,"</expr>"); 
+    }
+
     ;
 
     /* Right precedence (Right to Left) */
@@ -409,19 +443,23 @@ primary_expression
 multidim_arr_list
     : L_SQ_BRACKET expression R_SQ_BRACKET                        {  
         int len1 = strlen($2);
-        $$= (char*)malloc((len1+4)*sizeof(char)+1);
-        strcat($$,"(");
+        $$= (char*)malloc((len1+20)*sizeof(char)+1);
+        //strcat($$,"<expr>");
+        strcat($$,"[");
         strcat($$, $2);
-        strcat($$, ")");
+        strcat($$, "]");
+        //strcat($$,"</expr>");
     }
     | L_SQ_BRACKET expression R_SQ_BRACKET multidim_arr_list      { 
         int len1 = strlen($2);
         int len2 = strlen($4);
-        $$= (char*)malloc((len1+len2+4)*sizeof(char)+1);
-        strcat($$,"(");
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        //strcat($$,"<expr>");
+        strcat($$,"[");
         strcat($$, $2);
-        strcat($$, ")");
+        strcat($$, "]");
         strcat($$, $4);
+        //strcat($$,"</expr>");
     }
     ;
 
@@ -430,10 +468,12 @@ argument_expression_list
     | assignment_expression COMMA argument_expression_list { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+4)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        //strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, ",");
         strcat($$, $3);
+        //strcat($$,"</expr>");
     }
     ;
 
@@ -444,7 +484,7 @@ type_name
         int len2 = strlen($2);
         $$= (char*)malloc((len1+len2+4)*sizeof(char)+1);
         strcat($$, $1);
-        strcat($$, $2);
+        strcat($$, "*");
     }
     ;
 
@@ -472,38 +512,48 @@ suffix_expression
     : primary_expression { $$ = $1;}
     | suffix_expression INC  %prec INCPOST     {  
         int len1 = strlen($1);
-        $$ = (char*) malloc(sizeof(char)*(len1+3));
+        $$ = (char*) malloc(sizeof(char)*(len1+20));
+        strcat($$,"<expr>");
         strcat($$,$1);
         strcat($$,"++");
+        strcat($$,"</expr>");
     }
     | suffix_expression DEC   %prec DECPOST       { 
         int len1 = strlen($1);
-        $$ = (char*) malloc(sizeof(char)*(len1+3));
+        $$ = (char*) malloc(sizeof(char)*(len1+20));
+        strcat($$,"<expr>");
         strcat($$,$1);
         strcat($$,"--");
+        strcat($$,"</expr>");
     }
     | suffix_expression L_BRACKET R_BRACKET                  { 
         int len1 = strlen($1);
-        $$ = (char*) malloc(sizeof(char)*(len1+3));
+        $$ = (char*) malloc(sizeof(char)*(len1+20));
+        strcat($$,"<expr>");
         strcat($$,$1);
         strcat($$,"()");
+        strcat($$,"</expr>");
     }
     | suffix_expression L_BRACKET argument_expression_list R_BRACKET       { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+4)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$,"(");
         strcat($$, $3);
         strcat($$, ")");
+        strcat($$,"</expr>");
     }
       /* array: hw spec differs from c / c++ spec */
     | IDENTIFIER  multidim_arr_list       { 
         int len1 = strlen($1);
         int len2 = strlen($2);
-        $$= (char*)malloc((len1+len2+4)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, $2);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -511,60 +561,78 @@ prefix_expression
     : suffix_expression  { $$ = $1;}
     | INC prefix_expression              { 
         int len1 = strlen($2);
-        $$ = (char*) malloc(sizeof(char)*(len1+3));
+        $$ = (char*) malloc(sizeof(char)*(len1+20));
+        strcat($$,"<expr>");
         strcat($$,"++");
         strcat($$,$2);
+        strcat($$,"</expr>");
     }
     | DEC prefix_expression              { 
         int len1 = strlen($2);
-        $$ = (char*) malloc(sizeof(char)*(len1+3));
+        $$ = (char*) malloc(sizeof(char)*(len1+20));
+        strcat($$,"<expr>");
         strcat($$,"--");
         strcat($$,$2);
+        strcat($$,"</expr>");
     }
     | ADD prefix_expression %prec UADD  { 
         int len1 = strlen($2);
-        $$ = (char*) malloc(sizeof(char)*(len1+3));
+        $$ = (char*) malloc(sizeof(char)*(len1+20));
+        strcat($$,"<expr>");
         strcat($$,"+");
         strcat($$,$2);
+        strcat($$,"</expr>");
     }
     | MINUS prefix_expression  %prec UMINUS    { 
         int len1 = strlen($2);
-        $$ = (char*) malloc(sizeof(char)*(len1+3));
+        $$ = (char*) malloc(sizeof(char)*(len1+20));
+        strcat($$,"<expr>");
         strcat($$,"-");
         strcat($$,$2);
+        strcat($$,"</expr>");
     }
     | LOGICAL_NOT prefix_expression              { 
         int len1 = strlen($2);
-        $$ = (char*) malloc(sizeof(char)*(len1+3));
+        $$ = (char*) malloc(sizeof(char)*(len1+20));
+        strcat($$,"<expr>");
         strcat($$,"!");
         strcat($$,$2);
+        strcat($$,"</expr>");
     }
     | BITWISE_NOT prefix_expression              { 
         int len1 = strlen($2);
-        $$ = (char*) malloc(sizeof(char)*(len1+3));
+        $$ = (char*) malloc(sizeof(char)*(len1+20));
+        strcat($$,"<expr>");
         strcat($$,"~");
         strcat($$,$2);
+        strcat($$,"</expr>");
     }
     | MULTIPLY prefix_expression  %prec UMULTI  { 
         int len1 = strlen($2);
-        $$ = (char*) malloc(sizeof(char)*(len1+3));
+        $$ = (char*) malloc(sizeof(char)*(len1+20));
+        strcat($$,"<expr>");
         strcat($$,"*");
         strcat($$,$2);
+        strcat($$,"</expr>");
     }
     | AND_OP prefix_expression   %prec UANDOP { 
         int len1 = strlen($2);
-        $$ = (char*) malloc(sizeof(char)*(len1+3));
+        $$ = (char*) malloc(sizeof(char)*(len1+20));
+        strcat($$,"<expr>");
         strcat($$,"&");
         strcat($$,$2);
+        strcat($$,"</expr>");
     }
     | L_BRACKET type_name R_BRACKET prefix_expression   { 
         int len1 = strlen($2);
         int len2 = strlen($4);
-        $$= (char*)malloc((len1+len2+4)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$,"(");
         strcat($$, $2);
         strcat($$, ")");
         strcat($$, $4);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -575,26 +643,32 @@ multiplicative_expression
     | multiplicative_expression MULTIPLY prefix_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "*");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     | multiplicative_expression DIVIDE prefix_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "/");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     | multiplicative_expression MOD prefix_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "%");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -603,18 +677,22 @@ additive_expression
     | additive_expression ADD multiplicative_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "+");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     | additive_expression MINUS multiplicative_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "-");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -623,18 +701,22 @@ shift_expression
     | shift_expression SHIFT_LEFT additive_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "<<");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     | shift_expression SHIFT_RIGHT additive_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, ">>");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -643,34 +725,42 @@ relational_expression
     | relational_expression LESS_THAN shift_expression        { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "<");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     | relational_expression LESS_OR_EQUAL_THAN shift_expression     { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "<=");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     | relational_expression GREATER_THAN shift_expression        { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, ">");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     | relational_expression GREATER_OR_EQUAL_THAN shift_expression     { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, ">=");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -679,18 +769,22 @@ equality_expression
     | equality_expression EQUAL relational_expression   { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "==");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     | equality_expression NOT_EQUAL relational_expression  { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "!=");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -699,10 +793,12 @@ bitwise_and_expression
     | bitwise_and_expression AND_OP equality_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "&");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -711,10 +807,12 @@ bitwise_xor_expression
     | bitwise_xor_expression XOR_OP bitwise_and_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "^");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -723,10 +821,12 @@ bitwise_or_expression
     | bitwise_or_expression OR_OP bitwise_xor_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+2)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "|");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -735,10 +835,12 @@ logical_and_expression
     | logical_and_expression AND bitwise_or_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "&&");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -747,10 +849,12 @@ logical_or_expression
     | logical_or_expression OR logical_and_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+3)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "||");
         strcat($$, $3);
+        strcat($$,"</expr>");
      }
     ;
 
@@ -762,10 +866,12 @@ assignment_expression
     | logical_or_expression ASSIGN assignment_expression { 
         int len1 = strlen($1);
         int len2 = strlen($3);
-        $$= (char*)malloc((len1+len2+2)*sizeof(char)+1);
+        $$= (char*)malloc((len1+len2+20)*sizeof(char)+1);
+        strcat($$,"<expr>");
         strcat($$, $1);
         strcat($$, "=");
         strcat($$, $3);
+        strcat($$,"</expr>");
     }
     ;
 
@@ -774,10 +880,10 @@ assignment_expression
 expression
     : assignment_expression {
         int len1 = strlen($1); 
-        $$ = (char*) malloc(sizeof(char)*(len1+30));
-        strcat($$, "<expr>");
+        $$ = (char*) malloc(sizeof(char)*(len1+2));
+       // strcat($$, "<expr>");
         strcat($$,$1);
-        strcat($$,"</expr>");
+       // strcat($$,"</expr>");
     }
     ;
 /* expression */
@@ -902,15 +1008,19 @@ while_statement
         strcat($$,"while(");
         strcat($$,$3);
         strcat($$,")");
+        strcat($$,"<stmt>");
         strcat($$,$5);
+        strcat($$,"</stmt>");
     }
     ;
 
 do_while_statement
     : DO statement WHILE L_BRACKET expression R_BRACKET SEMICOLON { 
-        $$ = (char*) malloc (sizeof(char) * (50+strlen($2)+strlen($5)));
+        $$ = (char*) malloc (sizeof(char) * (30+strlen($2)+strlen($5)));
         strcat($$,"do");
+        strcat($$,"<stmt>");
         strcat($$,$2);
+        strcat($$,"</stmt>");
         strcat($$,"while(");
         strcat($$,$5);
         strcat($$,")");
@@ -920,7 +1030,7 @@ do_while_statement
 
 for_statement
     : FOR L_BRACKET emptiable_expression SEMICOLON emptiable_expression SEMICOLON emptiable_expression R_BRACKET statement {
-        $$ = (char*) malloc (sizeof(char) * (50+strlen($3)+strlen($5)+strlen($7)+strlen($9)));
+        $$ = (char*) malloc (sizeof(char) * (30+strlen($3)+strlen($5)+strlen($7)+strlen($9)));
         strcat($$,"for");
         strcat($$,"(");
         strcat($$,$3);
@@ -929,12 +1039,14 @@ for_statement
         strcat($$,";");
         strcat($$,$7);
         strcat($$,")");
+        strcat($$,"<stmt>");
         strcat($$,$9);
+        strcat($$,"</stmt>");
     }
     ;
 
 emptiable_expression
-    : /* empty */   { }
+    : /* empty */   { $$="";}
     | expression {$$ =$1;}
     ;
 

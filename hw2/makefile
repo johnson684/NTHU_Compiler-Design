@@ -2,7 +2,7 @@ LEX = flex
 CC = gcc
 BYACC = byacc
 YACC = yacc
-TESTFILE = test.c
+TESTFILE = test.txt
 
 all: parser
 

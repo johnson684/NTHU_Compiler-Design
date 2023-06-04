@@ -53,6 +53,7 @@ Macros "NULL"|"__COUNTER__"|"__LINE__"|"INT_MAX"|"INT_MIN"|"CHAR_MAX"|"CHAR_MIN"
 "break" { return BREAK;}
 "continue" { return CONTINUE; } // no struct
 
+
 "const" {yylval.stringval = strdup(yytext); return CONST;}
 "int" {yylval.stringval = strdup(yytext); return INT;}
 "char" {yylval.stringval = strdup(yytext); return CHAR;}
@@ -63,11 +64,12 @@ Macros "NULL"|"__COUNTER__"|"__LINE__"|"INT_MAX"|"INT_MIN"|"CHAR_MAX"|"CHAR_MIN"
 "unsigned" {yylval.stringval = strdup(yytext); return UNSIGNED;}
 "long" {yylval.stringval = strdup(yytext); return LONG;}
 "short" {yylval.stringval = strdup(yytext); return SHORT;}
+"NULL" {yylval.stringval = strdup("0"); return NL;}
 
 [a-zA-Z_][a-zA-Z0-9_]*  {yylval.stringval = strdup(yytext); return IDENTIFIER;}
 [0-9]+ {yylval.intval = atoi(yytext); return INT_LITERAL;} // int
 ("."[0-9]+|[0-9]+"."|[0-9]+"."[0-9]+)  {yylval.dval = atof(yytext); return FLOAT_LITERAL;} // float
-\'(\\.|[^'])\'  {yylval.stringval = strdup(yytext); return CHAR_LITERAL; } // char
+\'(\\.|[^'])\'  {yylval.stringval = strdup(yytext); return CHAR_LITERAL; } // char 
 \"(\\.|[^"])*\" {yylval.stringval = strdup(yytext); return STRING_LITERAL; } // str
 
 {Space} {}
@@ -77,7 +79,7 @@ Macros "NULL"|"__COUNTER__"|"__LINE__"|"INT_MAX"|"INT_MIN"|"CHAR_MAX"|"CHAR_MIN"
 
 "//".* {}
 "/*"    {}
-<COMMENT>"*/"   { BEGIN 0;}
+<COMMENT>"*/"   {}
 <COMMENT>.  {}
 <COMMENT>\n {}
 
