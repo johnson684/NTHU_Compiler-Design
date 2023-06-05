@@ -482,3 +482,100 @@ golden_parser < test.txt
 make clean
 make test
 golden_parser < test.txt
+git clone https://github.com/Redleaf23477/compilerProject.git
+cp -r /home/cd23p069/compilerProject/hw2/testcase/  /home/cd23p069/hw2/
+cd /home/cd23p069/hw2/testcase/
+diff
+./test.sh
+./test.sh scanner_test.c
+cp /home/cd23p069/hw2/parser  /home/cd23p069/hw2/testcase/
+./test.sh
+parser < scanner_test.c
+./parser < scanner_test.c
+./test.sh
+diff out out2
+cd ..
+make clean
+make
+make test
+make clean
+make
+make test
+make clean
+make
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make clean
+make 
+make clean
+make 
+make clean
+make 
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+golden_parser < test.txt
+make test
+make clean
+make
+make test
+make clean
+make
+make test
+make clean
+make
+make test
+golden_parser < test.txt
+make test
+make clean
+make
+make clean
+make
+make test
+make clean
+make
+make clean
+make
+make test
+make clean
+make
+make test
+make clean
+make
+make clean
+make
+make test
+make clean
+make
+make test
+goldend_parser < test.txt
+golden_parser < test.txt
+git add -A
+git rm --cached compilerProject
+git add -A
+git commit -m "bugs"
+git push
