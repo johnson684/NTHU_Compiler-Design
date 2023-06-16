@@ -19,191 +19,13 @@ codegen:
     addi sp, s0, -48 // update stack pointer
     // END PROLOGUE
     
-    li t0, 58
+    li t0, 42
     sw t0, -4(sp)
     addi sp, sp, -4
-    li t0, 17
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    div t0, t1, t0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, -52(s0)
+    li t0, 53
     sw t0, -4(sp)
     addi sp, sp, -4
     li t0, 2
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    mul t0, t0, t1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 10
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    add t0, t0, t1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, -52
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, -60(s0)
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, -60(s0)
-    add t0, t0, s0
-    lw t1, 0(t0)
-    sw t1, -4(sp)/*here*/
-    addi sp, sp, -4
-    li t0, 1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    add t0, t0, t1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)/*check*/
-    lw t1, -60(s0)
-    add t1, s0, t1
-    sw t0, 0(t1)
-    lw t0, -60(s0)
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, -60(s0)
-    add t0, t0, s0
-    lw t1, 0(t0)
-    sw t1, -4(sp)/*here*/
-    addi sp, sp, -4
-    lw a0, 0(sp)
-    addi sp, sp, 4
-    sw ra, -4(sp)
-    addi sp, sp, -4
-    jal ra, delay
-    lw ra, 0(sp)
-    addi sp, sp, 4
-    lw t0, -52(s0)
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw a0, 0(sp)
-    addi sp, sp, 4
-    sw ra, -4(sp)
-    addi sp, sp, -4
-    jal ra, delay
-    lw ra, 0(sp)
-    addi sp, sp, 4
-    li t0, -56
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    sw t0, -60(s0)
-    lw t0, -56(s0)
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, -52(s0)
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    div t0, t1, t0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)/*check*/
-    lw t1, -60(s0)
-    add t1, s0, t1
-    sw t0, 0(t1)
-    li t0, 1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 29
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw a0, 0(sp)
-    addi sp, sp, 4
-    lw a1, 0(sp)
-    addi sp, sp, 4
-    sw ra, -4(sp)
-    addi sp, sp, -4
-    jal ra, digitalWrite
-    lw ra, 0(sp)
-    addi sp, sp, 4
-    lw t0, -52(s0)
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 1000
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    mul t0, t0, t1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 1000
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    add t0, t0, t1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw a0, 0(sp)
-    addi sp, sp, 4
-    sw ra, -4(sp)
-    addi sp, sp, -4
-    jal ra, delay
-    lw ra, 0(sp)
-    addi sp, sp, 4
-    li t0, 0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 29
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw a0, 0(sp)
-    addi sp, sp, 4
-    lw a1, 0(sp)
-    addi sp, sp, 4
-    sw ra, -4(sp)
-    addi sp, sp, -4
-    jal ra, digitalWrite
-    lw ra, 0(sp)
-    addi sp, sp, 4
-    lw t0, -56(s0)
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 1000
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    mul t0, t0, t1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 250
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 8
     sw t0, -4(sp)
     addi sp, sp, -4
     lw t0, 0(sp)
@@ -218,6 +40,119 @@ codegen:
     lw t1, 0(sp)
     addi sp, sp, 4
     sub t0, t1, t0
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, -52
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, -52(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    sub t0, zero, t0
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 8
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    div t0, t1, t0
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)/*check*/
+    lw t1, -56(s0)
+    add t1, s0, t1
+    sw t0, 0(t1)
+    lw t0, -56(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, -56(s0)
+    add t0, t0, s0
+    lw t1, 0(t0)
+    sw t1, -4(sp)/*here*/
+    addi sp, sp, -4
+    li t0, 4
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    sub t0, t1, t0
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    sw t0, -52(s0)
+    li t0, 1
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 28
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw a0, 0(sp)
+    addi sp, sp, 4
+    lw a1, 0(sp)
+    addi sp, sp, 4
+    sw ra, -4(sp)
+    addi sp, sp, -4
+    jal ra, digitalWrite
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    lw t0, -52(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 1000
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    mul t0, t0, t1
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw a0, 0(sp)
+    addi sp, sp, 4
+    sw ra, -4(sp)
+    addi sp, sp, -4
+    jal ra, delay
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    li t0, 0
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 28
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw a0, 0(sp)
+    addi sp, sp, 4
+    lw a1, 0(sp)
+    addi sp, sp, 4
+    sw ra, -4(sp)
+    addi sp, sp, -4
+    jal ra, digitalWrite
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    lw t0, -56(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, -56(s0)
+    add t0, t0, s0
+    lw t1, 0(t0)
+    sw t1, -4(sp)/*here*/
+    addi sp, sp, -4
+    li t0, 1000
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    mul t0, t0, t1
     sw t0, -4(sp)
     addi sp, sp, -4
     lw a0, 0(sp)

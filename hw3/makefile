@@ -16,7 +16,7 @@ parser: lex.yy.c ytab
 	$(CC) -o parser lex.yy.c y.tab.c code.c -lfl
 	
 conflict: parser.y
-	${YACC} -v parser.y
+	${YACC} -v parser.y 
 
 test: parser
 	./parser < $(TESTFILE)

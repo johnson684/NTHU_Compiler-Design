@@ -251,7 +251,7 @@ array_declarator
 
     }
     | array_declarator L_SQ_BRACKET expression R_SQ_BRACKET {
-
+        
     }
     ;
 
@@ -439,6 +439,11 @@ assignment_expression
         fprintf(f_asm, "    add t1, s0, t1\n");
         fprintf(f_asm, "    sw t0, 0(t1)\n");
     }
+    | IDENTIFIER L_SQ_BRACKET expression R_SQ_BRACKET ASSIGN assignment_expression {
+        int index = look_up_symbol($1);
+        fprintf(f_asm, "    lw t0, 0(sp)\n");
+        fprintf(f_asm, "    sw t0, %d(s0)\n", table[index].offset * (-4) - 48);
+    }
     ;
 
 // lowest precedence, includes everything
@@ -457,8 +462,8 @@ statement
     | iteration_statement {$$ = $1;}
     | jump_statement {$$ = $1;}
     | compound_statement {$$ = $1;}
-    | delay_stmt
-    | digitalwrite_stmt
+    | delay_stmt{$$ = $$;}
+    | digitalwrite_stmt {$$ = $$;}
     ;
 
 digitalwrite_stmt
@@ -508,7 +513,7 @@ if_statement
 
     }
     | IF L_BRACKET expression R_BRACKET compound_statement ELSE compound_statement {
-
+        
     }
     ;
 
@@ -533,7 +538,7 @@ do_while_statement
 
 for_statement
     : FOR L_BRACKET expression SEMICOLON expression SEMICOLON expression R_BRACKET statement {
-
+        
     }
     ;
 
@@ -562,7 +567,7 @@ compound_statement
 
      }
     | L_PARENTHESIS statement_declaration_list R_PARENTHESIS    { 
-
+       
      }
     ;
 

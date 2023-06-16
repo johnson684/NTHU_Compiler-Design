@@ -672,3 +672,21 @@ git add -A
 git commit -m "hw3 D complete"
 git push
 ./test.sh
+cd hw3
+./test.sh
+git add -A
+git commit -m "partC complete"
+git push
+./test.sh
+make clean
+make
+make test
+./test.sh
+cd /home/cd23p069/hw2/
+./test.sh
+cd /home/cd23p069/hw3/
+./test.sh
+make conflict
+./test.sh
+make conflict
+make conflict -Wcounterexamples
