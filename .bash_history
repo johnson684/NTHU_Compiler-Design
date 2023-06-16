@@ -579,3 +579,90 @@ git rm --cached compilerProject
 git add -A
 git commit -m "bugs"
 git push
+cd /home/cd23p069/hw2/
+make clean
+make
+git add -A
+git commit -m "backup"
+git push
+cd hw2
+make test
+golden_parser < test.txt
+cp -r /home/cd23p069/hw2/* /home/cd23p069/hw3/
+cd /home/cd23p069/hw3/
+make clean
+cp /home/testcase/hw3/* /home/cd23p069/hw3/ 
+cp -r /home/testcase/hw3/* /home/cd23p069/hw3/ 
+spike
+cd /home/cd23p069/hw3/spike/
+riscv32-unknown-elf-gcc -o sample_prog main.c codegen.S
+spike pk sample_prog
+sample_prog
+bbl loader
+golden_parser sample_prog main.c codegen.S
+cd ..
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make test
+make clean
+make
+make test
+make clean
+make
+make test
+make clean
+make
+make test
+cd spike
+riscv32-unknown-elf-gcc -o sample_prog main.c codegen.S
+make clean
+cd ..
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+make clean
+make
+./test.sh
+cd /home/cd23p069/hw3/
+make clean
+make
+make clean
+make
+make test
+cp /home/cd23p069/hw3/spike/main.c .
+byacc: w - line 402 of "parser.y", the default action for statement assigns an undefined value to $$
+riscv32-unknown-elf-gcc -o sample_prog main.c codegen.S
+spike pk sample_prog
+./test.sh
