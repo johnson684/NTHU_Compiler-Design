@@ -327,23 +327,25 @@ prefix_expression
         fprintf(f_asm, "    lw t0, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
         fprintf(f_asm, "    sub t0, zero, t0\n");
+        fprintf(f_asm, "    sw t0, -4(sp)\n");
         fprintf(f_asm, "    addi sp, sp, -4\n");
-        fprintf(f_asm, "    sw t0, 0(sp)\n");
+        
     }
     | MULTIPLY prefix_expression  %prec UMULTI  { 
         int index = look_up_symbol($2);
         fprintf(f_asm, "    lw t0, %d(s0)\n", table[index].offset * (-4) - 48);
         fprintf(f_asm, "    add t0, t0, s0\n");
         fprintf(f_asm, "    lw t1, 0(t0)\n");
+        fprintf(f_asm, "    sw t1, -4(sp)/*here*/\n");
         fprintf(f_asm, "    addi sp, sp, -4\n");
-        fprintf(f_asm, "    sw t1, 0(sp)\n");
+        
         
     }
-    | AND_OP prefix_expression   %prec UANDOP { 
+    | AND_OP IDENTIFIER   %prec UANDOP { 
         int index = look_up_symbol($2);
         fprintf(f_asm, "    li t0, %d\n", table[index].offset * (-4) - 48);
+        fprintf(f_asm, "    sw t0, -4(sp)\n"); // 0?
         fprintf(f_asm, "    addi sp, sp, -4\n");
-        fprintf(f_asm, "    sw t0, 0(sp)\n");
     }
     ;
 
@@ -432,7 +434,7 @@ assignment_expression
     }
     | MULTIPLY IDENTIFIER ASSIGN assignment_expression {
         int index = look_up_symbol($2);
-        fprintf(f_asm, "    lw t0, 0(sp)\n");
+        fprintf(f_asm, "    lw t0, 0(sp)/*check*/\n");
         fprintf(f_asm, "    lw t1, %d(s0)\n", table[index].offset * (-4) - 48);
         fprintf(f_asm, "    add t1, s0, t1\n");
         fprintf(f_asm, "    sw t0, 0(t1)\n");

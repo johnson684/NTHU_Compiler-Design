@@ -666,3 +666,9 @@ byacc: w - line 402 of "parser.y", the default action for statement assigns an u
 riscv32-unknown-elf-gcc -o sample_prog main.c codegen.S
 spike pk sample_prog
 ./test.sh
+cd hw3
+./test.sh
+git add -A
+git commit -m "hw3 D complete"
+git push
+./test.sh
