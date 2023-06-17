@@ -59,7 +59,7 @@
 %token<stringval> IDENTIFIER CHAR_LITERAL STRING_LITERAL NL
 %token<intval> INT_LITERAL
 %token<dval> FLOAT_LITERAL
-%type<stringval> LITERAL
+%type<intval> LITERAL
 %start program
 %%
 /* declaration */
@@ -129,6 +129,7 @@ type_specifier
     ;
 LITERAL:
       INT_LITERAL {
+        $$=$1;
         fprintf(f_asm, "    li t0, %d\n", $1);
         fprintf(f_asm, "    sw t0, -4(sp)\n");
         fprintf(f_asm, "    addi sp, sp, -4\n");
@@ -247,7 +248,9 @@ array_init_declarator_list
 
 
 array_init_declarator
-    : array_declarator   { $$ = install_symbol($1); }
+    : array_declarator   { 
+        
+    }
     | array_declarator ASSIGN array_content   { 
         /*no need*/
         $$ = install_symbol($1);
@@ -255,8 +258,9 @@ array_init_declarator
     ;
 
 array_declarator
-    : IDENTIFIER L_SQ_BRACKET expression R_SQ_BRACKET {
-        $$ = $1;
+    : IDENTIFIER L_SQ_BRACKET LITERAL R_SQ_BRACKET {
+        $$ = install_array_symbol($1,$3); 
+        
     }
     | array_declarator L_SQ_BRACKET expression R_SQ_BRACKET {
         /* no need */
@@ -315,7 +319,16 @@ primary_expression
         
     }
     | IDENTIFIER L_SQ_BRACKET expression R_SQ_BRACKET   {
-
+        int index = look_up_symbol($1);
+        fprintf(f_asm, "    li t0, %d\n", table[index].offset * (-4) - 48);
+        fprintf(f_asm, "    lw t1, 0(sp)\n");
+        fprintf(f_asm, "    li t2, 4\n");
+        fprintf(f_asm, "    mul t1, t1, t2\n");
+        fprintf(f_asm, "    sub t0, t0, t1\n");
+        fprintf(f_asm, "    add t0, s0, t0\n");
+        fprintf(f_asm, "    lw t1, 0(t0)\n");
+        fprintf(f_asm, "    sw t1, -4(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, -4\n");
     }
 
     ;
@@ -476,16 +489,27 @@ assignment_expression
         fprintf(f_asm, "    lw t0, 0(sp)\n");
         fprintf(f_asm, "    sw t0, %d(s0)\n", table[index].offset * (-4) - 48);
     }
-    |  assign_primary_expression ASSIGN assignment_expression %prec UMULTI {
+    |  assign_primary_expression ASSIGN assignment_expression {
         if(assignflag==0){
             int index = look_up_symbol($1);
             fprintf(f_asm, "    lw t0, 0(sp)\n");
             fprintf(f_asm, "    lw t1, %d(s0)\n", table[index].offset * (-4) - 48);
             fprintf(f_asm, "    add t1, s0, t1\n");
             fprintf(f_asm, "    sw t0, 0(t1)\n");
-        }else {
-            
         }
+    }
+    | IDENTIFIER L_SQ_BRACKET expression R_SQ_BRACKET ASSIGN assignment_expression  {
+        int index = look_up_symbol($1);
+        fprintf(f_asm, "    lw t0, 0(sp)\n"); //
+        fprintf(f_asm, "    addi sp, sp, 4\n");
+        fprintf(f_asm, "    lw t1, 0(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, 4\n");
+        fprintf(f_asm, "    li t2, %d\n", table[index].offset * (-4) - 48);
+        fprintf(f_asm, "    li t3, 4\n");
+        fprintf(f_asm, "    mul t1, t1, t3\n");
+        fprintf(f_asm, "    sub t2, t2, t1\n");
+        fprintf(f_asm, "    add t2, s0, t2\n");
+        fprintf(f_asm, "    sw t0, 0(t2)\n");
     }
     ;
 assign_primary_expression
@@ -494,11 +518,9 @@ assign_primary_expression
         $$ = $2;
     }
     | MULTIPLY L_BRACKET expression R_BRACKET    { 
-        assignflag=1;
-    }
-    | IDENTIFIER L_SQ_BRACKET expression R_SQ_BRACKET   {
         assignflag=2;
-    } 
+    }
+     
     ;
 // lowest precedence, includes everything
 // comma not supported

@@ -714,3 +714,15 @@ make test
 ./test.sh
 cd hw3
 ./test.sh
+cd hw3
+./test.sh
+make test
+./test.sh
+git add -A
+git commit -m "branch stmt complete"
+git push
+./test.sh
+cd hw3
+./test.sh
+cd hw3
+./test.sh

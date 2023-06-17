@@ -1,25 +1,12 @@
 void codegen();
 
 void codegen() {
-  int i=0;
-  int a=1;
-  for (i = 0; i < 17; i = i + 1) {
-    int slot = 0;
-    int cont =0;
-    while (cont) {
-      i=20;
-      if (1==2) {
-        a=5;
-      } else {
-        cont = 0;
-      }
-      if (slot == 0) {
-        cont = 0;
-      }
-    }
-  }
-  delay(a);
-  delay(i);
+  int input_data[17];
+  int slot=17;
+  int cont = slot != 0;
+  
+  delay(cont);
+  delay(slot);
   digitalWrite(26, HIGH);
   //delay((data[0] - data[2]) * 1000); /* data[0] - data[2] = 3 */
   digitalWrite(26, LOW);

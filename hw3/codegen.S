@@ -19,113 +19,37 @@ codegen:
     addi sp, s0, -48 // update stack pointer
     // END PROLOGUE
     
-    li t0, 0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    sw t0, -52(s0)
-    li t0, 1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    sw t0, -56(s0)
-    li t0, 0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    sw t0, -52(s0)
-FOR1:
-    lw t0, -52(s0)
+    li t0, 17
     sw t0, -4(sp)
     addi sp, sp, -4
     li t0, 17
     sw t0, -4(sp)
     addi sp, sp, -4
     lw t0, 0(sp)
+    sw t0, -120(s0)
+    lw t0, -120(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 0
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
     addi sp, sp, 4
     lw t1, 0(sp)
     addi sp, sp, 4
-    bge t1, t0, L1
-    lw t0, -52(s0)
-    sw t0, -4(sp)
+    bne t1, t0, LXA
+    addi sp, sp, -4
+    li t0, 0
+    sw t0, 0(sp)
+    beq zero, zero, EXITXA
+LXA:
     addi sp, sp, -4
     li t0, 1
-    sw t0, -4(sp)
-    addi sp, sp, -4
+    sw t0, 0(sp)
+EXITXA:
     lw t0, 0(sp)
-    addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    add t0, t0, t1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    sw t0, -52(s0)
-    li t0, 0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    sw t0, -60(s0)
-    li t0, 0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    sw t0, -64(s0)
-WHILE2:
-    lw t0, -64(s0)
-    li t1, 0
-    beq t1, t0, L2
-    li t0, 20
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    sw t0, -52(s0)
-    li t0, 1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 2
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    bne t1, t0, L3
-    li t0, 5
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    sw t0, -56(s0)
-    beq zero, zero, EXIT3
-L3:
-    li t0, 0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    sw t0, -64(s0)
-EXIT3:
-    lw t0, -60(s0)
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    bne t1, t0, L4
-    li t0, 0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, 0(sp)
-    sw t0, -64(s0)
-L4:
-    beq zero, zero, WHILE2
-L2:
-    beq zero, zero, FOR1
-L1:
-    lw t0, -56(s0)
+    sw t0, -124(s0)
+    lw t0, -124(s0)
     sw t0, -4(sp)
     addi sp, sp, -4
     lw a0, 0(sp)
@@ -135,7 +59,7 @@ L1:
     jal ra, delay
     lw ra, 0(sp)
     addi sp, sp, 4
-    lw t0, -52(s0)
+    lw t0, -120(s0)
     sw t0, -4(sp)
     addi sp, sp, -4
     lw a0, 0(sp)
