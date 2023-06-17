@@ -63,7 +63,7 @@ int look_up_symbol(char *s) {
 void pop_up_symbol(int scope) {
     int i;
     if (cur_counter == 0) return;
-    for (i = cur_counter - 1; i >= 0; i++) {
+    for (i = cur_counter - 1; i >= 0; i--) {
         if (table[i].scope != scope)
             break;
         cur_local_var--;

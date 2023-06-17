@@ -4,8 +4,11 @@
     int yylex();
     int lineNo = 1;
     int in_if = 0;
+    int in_while = 0;
+    int in_for = 0;
     extern FILE* f_asm;
     int arg_cnt;
+    int assignflag = 0;
 %}
 
 %union {
@@ -32,6 +35,7 @@
 /* hw3 */
 %token<stringval> DIGITALWRITE DELAY 
 %token<intval> DVALUE
+%type<stringval> assign_primary_expression
 /* keyword */
 %token IF ELSE SWITCH CASE DEFAULT WHILE DO FOR RETURN BREAK CONTINUE
 /* punc */
@@ -161,6 +165,9 @@ scalar_init_declarator
     }
     | scalar_declarator ASSIGN expression   { 
         $$ = install_symbol($1);
+        int index = look_up_symbol($1);
+        fprintf(f_asm, "    lw t0, 0(sp)\n");
+        fprintf(f_asm, "    sw t0, %d(s0)\n", table[index].offset * (-4) - 48);
     }
     ;
 
@@ -240,18 +247,19 @@ array_init_declarator_list
 
 
 array_init_declarator
-    : array_declarator   { $$ = $1; }
+    : array_declarator   { $$ = install_symbol($1); }
     | array_declarator ASSIGN array_content   { 
-
+        /*no need*/
+        $$ = install_symbol($1);
     }
     ;
 
 array_declarator
     : IDENTIFIER L_SQ_BRACKET expression R_SQ_BRACKET {
-
+        $$ = $1;
     }
     | array_declarator L_SQ_BRACKET expression R_SQ_BRACKET {
-        
+        /* no need */
     }
     ;
 
@@ -283,21 +291,28 @@ array_expression
 primary_expression
     : IDENTIFIER  {
         int index = look_up_symbol($1);
-        if (table[index].mode == LOCAL_MODE) {
+        if(in_while==0){
+            if (table[index].mode == LOCAL_MODE) {
+                fprintf(f_asm, "    lw t0, %d(s0)\n", table[index].offset * (-4) - 48);
+                fprintf(f_asm, "    sw t0, -4(sp)\n");
+                fprintf(f_asm, "    addi sp, sp, -4\n");
+            } else {
+                /*fprintf(f_asm, "    lw t0, %d(sp)\n", table[index].offset * (-4) - 16);
+                fprintf(f_asm, "    sw t0, -4(sp)\n");
+                fprintf(f_asm, "    addi sp, sp, -4\n");*/
+            }
+        }else {
             fprintf(f_asm, "    lw t0, %d(s0)\n", table[index].offset * (-4) - 48);
-            fprintf(f_asm, "    sw t0, -4(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, -4\n");
-        } else {
-            /*fprintf(f_asm, "    lw t0, %d(sp)\n", table[index].offset * (-4) - 16);
-            fprintf(f_asm, "    sw t0, -4(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, -4\n");*/
+            fprintf(f_asm, "    li t1, 0\n");
+            fprintf(f_asm, "    beq t1, t0, L%d\n", cur_label);
         }
+
     }
     | LITERAL     { 
 
     }
     | L_BRACKET expression R_BRACKET    { 
-
+        
     }
     | IDENTIFIER L_SQ_BRACKET expression R_SQ_BRACKET   {
 
@@ -401,7 +416,11 @@ additive_expression
 relational_expression
     : additive_expression { $$ = $1;}
     | relational_expression LESS_THAN additive_expression        { 
-
+        fprintf(f_asm, "    lw t0, 0(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, 4\n");
+        fprintf(f_asm, "    lw t1, 0(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, 4\n");
+        fprintf(f_asm, "    bge t1, t0, L%d\n", cur_label);
     }
     | relational_expression LESS_OR_EQUAL_THAN additive_expression     { 
 
@@ -417,10 +436,35 @@ relational_expression
 equality_expression
     : relational_expression { $$ = $1;}
     | equality_expression EQUAL relational_expression   { 
-
+        fprintf(f_asm, "    lw t0, 0(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, 4\n");
+        fprintf(f_asm, "    lw t1, 0(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, 4\n");
+        fprintf(f_asm, "    bne t1, t0, L%d\n", cur_label);
     }
     | equality_expression NOT_EQUAL relational_expression  { 
-
+        if (in_if == 1) {
+            fprintf(f_asm, "    lw t0, 0(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, 4\n");
+            fprintf(f_asm, "    lw t1, 0(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, 4\n");
+            fprintf(f_asm, "    beq t1, t0, L%d\n", cur_label);
+        } else {
+            fprintf(f_asm, "    lw t0, 0(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, 4\n");
+            fprintf(f_asm, "    lw t1, 0(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, 4\n");
+            fprintf(f_asm, "    bne t1, t0, LXA\n");
+            fprintf(f_asm, "    addi sp, sp, -4\n");
+            fprintf(f_asm, "    li t0, 0\n");
+            fprintf(f_asm, "    sw t0, 0(sp)\n");
+            fprintf(f_asm, "    beq zero, zero, EXITXA\n");
+            fprintf(f_asm, "LXA:\n");
+            fprintf(f_asm, "    addi sp, sp, -4\n");
+            fprintf(f_asm, "    li t0, 1\n");
+            fprintf(f_asm, "    sw t0, 0(sp)\n");
+            fprintf(f_asm, "EXITXA:\n");
+        }
     }
     ;
 
@@ -432,20 +476,30 @@ assignment_expression
         fprintf(f_asm, "    lw t0, 0(sp)\n");
         fprintf(f_asm, "    sw t0, %d(s0)\n", table[index].offset * (-4) - 48);
     }
-    | MULTIPLY IDENTIFIER ASSIGN assignment_expression {
-        int index = look_up_symbol($2);
-        fprintf(f_asm, "    lw t0, 0(sp)/*check*/\n");
-        fprintf(f_asm, "    lw t1, %d(s0)\n", table[index].offset * (-4) - 48);
-        fprintf(f_asm, "    add t1, s0, t1\n");
-        fprintf(f_asm, "    sw t0, 0(t1)\n");
-    }
-    | IDENTIFIER L_SQ_BRACKET expression R_SQ_BRACKET ASSIGN assignment_expression {
-        int index = look_up_symbol($1);
-        fprintf(f_asm, "    lw t0, 0(sp)\n");
-        fprintf(f_asm, "    sw t0, %d(s0)\n", table[index].offset * (-4) - 48);
+    |  assign_primary_expression ASSIGN assignment_expression %prec UMULTI {
+        if(assignflag==0){
+            int index = look_up_symbol($1);
+            fprintf(f_asm, "    lw t0, 0(sp)\n");
+            fprintf(f_asm, "    lw t1, %d(s0)\n", table[index].offset * (-4) - 48);
+            fprintf(f_asm, "    add t1, s0, t1\n");
+            fprintf(f_asm, "    sw t0, 0(t1)\n");
+        }else {
+            
+        }
     }
     ;
-
+assign_primary_expression
+    : MULTIPLY IDENTIFIER  {
+        assignflag=0;
+        $$ = $2;
+    }
+    | MULTIPLY L_BRACKET expression R_BRACKET    { 
+        assignflag=1;
+    }
+    | IDENTIFIER L_SQ_BRACKET expression R_SQ_BRACKET   {
+        assignflag=2;
+    } 
+    ;
 // lowest precedence, includes everything
 // comma not supported
 expression
@@ -507,13 +561,34 @@ expression_statement
 selection_statement
     : if_statement { $$ = $1;}
     ;
-
-if_statement
-    : IF L_BRACKET expression R_BRACKET compound_statement { 
-
+if_start_stat:
+    IF {
+        cur_scope++;
+        cur_label++;
+        in_if = 1;
+    }L_BRACKET expression {
+        push_label(cur_label);
+        /*fprintf(f_asm, "    lw t0, 0(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, 4\n");*/
+        in_if = 0;
     }
-    | IF L_BRACKET expression R_BRACKET compound_statement ELSE compound_statement {
-        
+if_statement
+    : if_start_stat R_BRACKET compound_statement { 
+        int tmp_label = pop_label();
+        fprintf(f_asm, "L%d:\n", tmp_label);
+        pop_up_symbol(cur_scope);
+        cur_scope--;
+    }
+    | if_start_stat R_BRACKET compound_statement ELSE{
+        int tmp_label = pop_label();
+        fprintf(f_asm, "    beq zero, zero, EXIT%d\n", tmp_label);
+        fprintf(f_asm, "L%d:\n", tmp_label);
+        push_label(tmp_label);
+    } compound_statement {
+        int tmp_label = pop_label();
+        fprintf(f_asm, "EXIT%d:\n", tmp_label);
+        pop_up_symbol(cur_scope);
+        cur_scope--;
     }
     ;
 
@@ -525,20 +600,49 @@ iteration_statement
     ;
 
 while_statement
-    : WHILE L_BRACKET expression R_BRACKET statement    {  
-
+    : WHILE {
+        cur_label++;
+        cur_scope++;
+        fprintf(f_asm, "WHILE%d:\n", cur_label);
+        push_label(cur_label);
+        in_while = 1;
+    }L_BRACKET expression{
+        in_while = 0;
+    } R_BRACKET statement    {  
+        int tmp_label = pop_label();
+        fprintf(f_asm, "    beq zero, zero, WHILE%d\n", tmp_label);
+        fprintf(f_asm, "L%d:\n", tmp_label);
+        pop_up_symbol(cur_scope);
+        cur_scope--;
     }
     ;
 
 do_while_statement
-    : DO statement WHILE L_BRACKET expression R_BRACKET SEMICOLON { 
-
+    : DO {
+        cur_scope++;
+        cur_label++;
+        fprintf(f_asm, "DOWHILE%d:\n", cur_label);
+        push_label(cur_label);  
+    }statement WHILE L_BRACKET expression R_BRACKET SEMICOLON { 
+        int tmp_label = pop_label();
+        fprintf(f_asm, "    beq zero, zero, DOWHILE%d\n", tmp_label);
+        fprintf(f_asm, "L%d:\n", tmp_label);
+        pop_up_symbol(cur_scope);
+        cur_scope--;
     }
     ;
 
 for_statement
-    : FOR L_BRACKET expression SEMICOLON expression SEMICOLON expression R_BRACKET statement {
-        
+    : FOR L_BRACKET expression SEMICOLON{
+        cur_scope++;
+        push_label(++cur_label);
+        fprintf(f_asm, "FOR%d:\n", cur_label);
+    } expression SEMICOLON expression R_BRACKET compound_statement {
+        int tmp_label = pop_label();
+        fprintf(f_asm, "    beq zero, zero, FOR%d\n", tmp_label);
+        fprintf(f_asm, "L%d:\n", tmp_label);
+        pop_up_symbol(cur_scope);
+        cur_scope--;
     }
     ;
 

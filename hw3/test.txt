@@ -1,12 +1,27 @@
 void codegen();
 
 void codegen() {
-  int a = 42 - 53 * 2; /* a = -64 */
-  int *b = &a; /* *b = -64 */
-  *b = -a / 8; /* a = 8, *b = 8 */
-  a = *b - 4; /* a = 4, *b = 4 */
-  digitalWrite(28, HIGH);
-  delay(a * 1000);
-  digitalWrite(28, LOW);
-  delay(*b * 1000);
+  int i=0;
+  int a=1;
+  for (i = 0; i < 17; i = i + 1) {
+    int slot = 0;
+    int cont =0;
+    while (cont) {
+      i=20;
+      if (1==2) {
+        a=5;
+      } else {
+        cont = 0;
+      }
+      if (slot == 0) {
+        cont = 0;
+      }
+    }
+  }
+  delay(a);
+  delay(i);
+  digitalWrite(26, HIGH);
+  //delay((data[0] - data[2]) * 1000); /* data[0] - data[2] = 3 */
+  digitalWrite(26, LOW);
+  //delay((end - data[0]) * 1000); /* end - data[0] = 1 */
 }

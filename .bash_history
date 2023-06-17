@@ -690,3 +690,27 @@ make conflict
 ./test.sh
 make conflict
 make conflict -Wcounterexamples
+cd hw3
+make conflict -Wcounterexamples
+make conflict
+./test.sh
+git add -A
+git commit -m "too tired"
+git psuh
+git push
+./test.sh
+make conflict
+./test.sh
+git pull
+./test.sh
+cd hw3
+./test.sh
+cp /home/cd23p069/hw3/F1/Pointer/* .
+./test.sh
+make confilct
+make conflict
+./test.sh
+make test
+./test.sh
+cd hw3
+./test.sh
