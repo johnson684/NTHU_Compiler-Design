@@ -2,12 +2,10 @@
     #include <stdio.h>
     #include "code.h"
     int yylex();
-    int dbg=0;
     int lineNo = 1;
     int in_if = 0;
     int in_while = 0;
     int in_for = 0;
-    int is_array = 0;
     extern FILE* f_asm;
     int arg_cnt;
     int assignflag = 0;
@@ -163,17 +161,14 @@ scalar_init_declarator_list
 scalar_init_declarator
     : scalar_declarator                    { 
         $$ = install_symbol($1);
-        int index = look_up_symbol($1);
-        fprintf(f_asm, "    addi sp, sp, -4\n");
-        fprintf(f_asm, "    sw zero, %d(s0)\n", table[index].offset * (-4) - 48);
+        /*fprintf(f_asm, "    addi sp, sp, -4\n");
+        fprintf(f_asm, "    sw zero, 0(sp)\n");*/
     }
     | scalar_declarator ASSIGN expression   { 
         $$ = install_symbol($1);
         int index = look_up_symbol($1);
         fprintf(f_asm, "    lw t0, 0(sp)\n");
-        fprintf(f_asm, "    addi sp, sp, 4\n");
         fprintf(f_asm, "    sw t0, %d(s0)\n", table[index].offset * (-4) - 48);
-        fprintf(f_asm, "    addi sp, sp, -4\n");
     }
     ;
 
@@ -258,7 +253,7 @@ array_init_declarator
     }
     | array_declarator ASSIGN array_content   { 
         /*no need*/
-        //$$ = install_symbol($1);
+        $$ = install_symbol($1);
     }
     ;
 
@@ -299,9 +294,7 @@ array_expression
 // highest precedence, should not be separated
 primary_expression
     : IDENTIFIER  {
-        $$=$1;
         int index = look_up_symbol($1);
-        if(table[index].type == T_POINTER)is_array=1;
         if(in_while==0){
             if (table[index].mode == LOCAL_MODE) {
                 fprintf(f_asm, "    lw t0, %d(s0)\n", table[index].offset * (-4) - 48);
@@ -329,7 +322,6 @@ primary_expression
         int index = look_up_symbol($1);
         fprintf(f_asm, "    li t0, %d\n", table[index].offset * (-4) - 48);
         fprintf(f_asm, "    lw t1, 0(sp)\n");
-        fprintf(f_asm, "    addi sp, sp, 4\n");
         fprintf(f_asm, "    li t2, 4\n");
         fprintf(f_asm, "    mul t1, t1, t2\n");
         fprintf(f_asm, "    sub t0, t0, t1\n");
@@ -368,15 +360,11 @@ prefix_expression
         
     }
     | MULTIPLY prefix_expression  %prec UMULTI  { 
-        /*section B*/
-        //int index = look_up_symbol($2);
-        //fprintf(f_asm, "    lw t0, %d(s0)\n", table[index].offset * (-4) - 48);
-        fprintf(f_asm, "    lw t0, 0(sp)\n");
-        fprintf(f_asm, "    addi sp, sp, 4\n");
-        /*section B*/
+        int index = look_up_symbol($2);
+        fprintf(f_asm, "    lw t0, %d(s0)\n", table[index].offset * (-4) - 48);
         fprintf(f_asm, "    add t0, t0, s0\n");
         fprintf(f_asm, "    lw t1, 0(t0)\n");
-        fprintf(f_asm, "    sw t1, -4(sp)\n");
+        fprintf(f_asm, "    sw t1, -4(sp)/*here*/\n");
         fprintf(f_asm, "    addi sp, sp, -4\n");
         
         
@@ -384,7 +372,7 @@ prefix_expression
     | AND_OP IDENTIFIER   %prec UANDOP { 
         int index = look_up_symbol($2);
         fprintf(f_asm, "    li t0, %d\n", table[index].offset * (-4) - 48);
-        fprintf(f_asm, "    sw t0, -4(sp)\n"); 
+        fprintf(f_asm, "    sw t0, -4(sp)\n"); // 0?
         fprintf(f_asm, "    addi sp, sp, -4\n");
     }
     ;
@@ -411,45 +399,30 @@ multiplicative_expression
         fprintf(f_asm, "    sw t0, -4(sp)\n");
         fprintf(f_asm, "    addi sp, sp, -4\n");
     }
+    | multiplicative_expression MOD prefix_expression { 
+
+    }
     ;
 
 additive_expression
     : multiplicative_expression { $$ = $1;}
     | additive_expression ADD multiplicative_expression { 
-        if(is_array){
-            int index = look_up_symbol($1);
-            $$=$1;
-            if(dbg)printf("HELLO %s\n",table[index].name);
-            fprintf(f_asm, "    lw t0, 0(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, 4\n");
-            fprintf(f_asm, "    li t1, %d\n", table[index].offset * (-4) - 48);
-            fprintf(f_asm, "    li t3, 4\n");
-            fprintf(f_asm, "    mul t0, t0, t3\n");
-            fprintf(f_asm, "    sub t0, t1, t0\n");
-            fprintf(f_asm, "    sw t0, -4(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, -4\n");
-        }else {
-            fprintf(f_asm, "    lw t0, 0(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, 4\n");
-            fprintf(f_asm, "    lw t1, 0(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, 4\n");
-            fprintf(f_asm, "    add t0, t0, t1\n");
-            fprintf(f_asm, "    sw t0, -4(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, -4\n");
-        }
+        fprintf(f_asm, "    lw t0, 0(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, 4\n");
+        fprintf(f_asm, "    lw t1, 0(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, 4\n");
+        fprintf(f_asm, "    add t0, t0, t1\n");
+        fprintf(f_asm, "    sw t0, -4(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, -4\n");
     }
     | additive_expression MINUS multiplicative_expression { 
-        if(is_array) {
-
-        } else {
-            fprintf(f_asm, "    lw t0, 0(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, 4\n");
-            fprintf(f_asm, "    lw t1, 0(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, 4\n");
-            fprintf(f_asm, "    sub t0, t1, t0\n");
-            fprintf(f_asm, "    sw t0, -4(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, -4\n");
-        }
+        fprintf(f_asm, "    lw t0, 0(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, 4\n");
+        fprintf(f_asm, "    lw t1, 0(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, 4\n");
+        fprintf(f_asm, "    sub t0, t1, t0\n");
+        fprintf(f_asm, "    sw t0, -4(sp)\n");
+        fprintf(f_asm, "    addi sp, sp, -4\n");
     }
     ;
 
@@ -512,27 +485,15 @@ equality_expression
 assignment_expression
     : equality_expression { $$ = $1;}
     | IDENTIFIER ASSIGN assignment_expression {
-        $$=$1;
         int index = look_up_symbol($1);
         fprintf(f_asm, "    lw t0, 0(sp)\n");
-        fprintf(f_asm, "    addi sp, sp, 4\n");
         fprintf(f_asm, "    sw t0, %d(s0)\n", table[index].offset * (-4) - 48);
-
     }
     |  assign_primary_expression ASSIGN assignment_expression {
         if(assignflag==0){
             int index = look_up_symbol($1);
             fprintf(f_asm, "    lw t0, 0(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, 4\n");
             fprintf(f_asm, "    lw t1, %d(s0)\n", table[index].offset * (-4) - 48);
-            fprintf(f_asm, "    add t1, s0, t1\n");
-            fprintf(f_asm, "    sw t0, 0(t1)\n");
-        }else if(assignflag==2){
-            //int index = look_up_symbol($1);
-            fprintf(f_asm, "    lw t0, 0(sp)\n") ;
-            fprintf(f_asm, "    addi sp, sp, 4\n");
-            fprintf(f_asm, "    lw t1, 0(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, 4\n");
             fprintf(f_asm, "    add t1, s0, t1\n");
             fprintf(f_asm, "    sw t0, 0(t1)\n");
         }
@@ -558,7 +519,6 @@ assign_primary_expression
     }
     | MULTIPLY L_BRACKET expression R_BRACKET    { 
         assignflag=2;
-        $$=$3;
     }
      
     ;
@@ -566,8 +526,7 @@ assign_primary_expression
 // comma not supported
 expression
     : assignment_expression {
-        is_array = 0;
-        $$=$1;
+
     }
     ;
 /* expression */
@@ -699,19 +658,9 @@ for_statement
     : FOR L_BRACKET expression SEMICOLON{
         cur_scope++;
         push_label(++cur_label);
-        /*tricky*/
-        in_for=1;
         fprintf(f_asm, "FOR%d:\n", cur_label);
-    } expression SEMICOLON {
-        in_for=0;
-    } IDENTIFIER ASSIGN IDENTIFIER ADD INT_LITERAL R_BRACKET compound_statement {
+    } expression SEMICOLON expression R_BRACKET compound_statement {
         int tmp_label = pop_label();
-        int index = look_up_symbol($3);
-        
-        //printf("%d",table[index].scope);
-        fprintf(f_asm, "    lw t0, %d(s0)\n", table[index].offset * (-4) - 48);
-        fprintf(f_asm, "    addi t0, t0, 1\n");
-        fprintf(f_asm, "    sw t0, %d(s0)\n", table[index].offset * (-4) - 48);
         fprintf(f_asm, "    beq zero, zero, FOR%d\n", tmp_label);
         fprintf(f_asm, "L%d:\n", tmp_label);
         pop_up_symbol(cur_scope);

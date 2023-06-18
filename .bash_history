@@ -726,3 +726,17 @@ cd hw3
 ./test.sh
 cd hw3
 ./test.sh
+git add -A
+cd hw3
+git add -A
+git commit -m "array decl complete"
+git push
+./test.sh
+cd hw3
+./test.sh
+cd hw3
+./test.sh
+cd hw3
+./test.sh
+cd hw3
+./test.sh

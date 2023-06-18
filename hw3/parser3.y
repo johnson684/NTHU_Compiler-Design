@@ -2,7 +2,7 @@
     #include <stdio.h>
     #include "code.h"
     int yylex();
-    int dbg=0;
+    int dbg=1;
     int lineNo = 1;
     int in_if = 0;
     int in_while = 0;
@@ -163,17 +163,14 @@ scalar_init_declarator_list
 scalar_init_declarator
     : scalar_declarator                    { 
         $$ = install_symbol($1);
-        int index = look_up_symbol($1);
-        fprintf(f_asm, "    addi sp, sp, -4\n");
-        fprintf(f_asm, "    sw zero, %d(s0)\n", table[index].offset * (-4) - 48);
+        /*fprintf(f_asm, "    addi sp, sp, -4\n");
+        fprintf(f_asm, "    sw zero, 0(sp)\n");*/
     }
     | scalar_declarator ASSIGN expression   { 
         $$ = install_symbol($1);
         int index = look_up_symbol($1);
         fprintf(f_asm, "    lw t0, 0(sp)\n");
-        fprintf(f_asm, "    addi sp, sp, 4\n");
         fprintf(f_asm, "    sw t0, %d(s0)\n", table[index].offset * (-4) - 48);
-        fprintf(f_asm, "    addi sp, sp, -4\n");
     }
     ;
 
@@ -258,7 +255,7 @@ array_init_declarator
     }
     | array_declarator ASSIGN array_content   { 
         /*no need*/
-        //$$ = install_symbol($1);
+        $$ = install_symbol($1);
     }
     ;
 
@@ -418,7 +415,6 @@ additive_expression
     | additive_expression ADD multiplicative_expression { 
         if(is_array){
             int index = look_up_symbol($1);
-            $$=$1;
             if(dbg)printf("HELLO %s\n",table[index].name);
             fprintf(f_asm, "    lw t0, 0(sp)\n");
             fprintf(f_asm, "    addi sp, sp, 4\n");
@@ -460,6 +456,10 @@ relational_expression
         fprintf(f_asm, "    addi sp, sp, 4\n");
         fprintf(f_asm, "    lw t1, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
+        if(in_for){
+            if(dbg) printf("trick failQQ\n");
+           // fprintf(f_asm, "    addi t1, t1, 1\n");
+        }
         fprintf(f_asm, "    bge t1, t0, L%d\n", cur_label);
     }
     | relational_expression LESS_OR_EQUAL_THAN additive_expression     { 
@@ -527,14 +527,6 @@ assignment_expression
             fprintf(f_asm, "    lw t1, %d(s0)\n", table[index].offset * (-4) - 48);
             fprintf(f_asm, "    add t1, s0, t1\n");
             fprintf(f_asm, "    sw t0, 0(t1)\n");
-        }else if(assignflag==2){
-            //int index = look_up_symbol($1);
-            fprintf(f_asm, "    lw t0, 0(sp)\n") ;
-            fprintf(f_asm, "    addi sp, sp, 4\n");
-            fprintf(f_asm, "    lw t1, 0(sp)\n");
-            fprintf(f_asm, "    addi sp, sp, 4\n");
-            fprintf(f_asm, "    add t1, s0, t1\n");
-            fprintf(f_asm, "    sw t0, 0(t1)\n");
         }
     }
     | IDENTIFIER L_SQ_BRACKET expression R_SQ_BRACKET ASSIGN assignment_expression  {
@@ -558,7 +550,6 @@ assign_primary_expression
     }
     | MULTIPLY L_BRACKET expression R_BRACKET    { 
         assignflag=2;
-        $$=$3;
     }
      
     ;

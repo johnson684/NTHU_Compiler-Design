@@ -40,6 +40,10 @@ char *install_array_symbol(char *s, int n) {
         perror("Symbol Table Full");
     } else {
         cur_local_var++;
+        for(int i = cur_local_var; i <= cur_local_var+n-1; i++) {
+            fprintf(f_asm, "    addi sp, sp, -4\n");
+            fprintf(f_asm, "    sw zero, %d(s0)\n", i * (-4) - 48);
+        }
         table[cur_counter].scope = cur_scope;
         table[cur_counter].name = copys(s);
         table[cur_counter].offset = cur_local_var;
@@ -48,6 +52,8 @@ char *install_array_symbol(char *s, int n) {
         cur_local_var += n - 1;
         cur_counter++;
     }
+    
+    //fprintf(f_asm, "    addi sp, sp, -%d\n",n*4);
     return s;
 }
 

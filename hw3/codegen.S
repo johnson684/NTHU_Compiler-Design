@@ -22,83 +22,74 @@ codegen:
     li t0, 17
     sw t0, -4(sp)
     addi sp, sp, -4
-    li t0, 17
+    addi sp, sp, -4
+    sw zero, -52(s0)
+    addi sp, sp, -4
+    sw zero, -56(s0)
+    addi sp, sp, -4
+    sw zero, -60(s0)
+    addi sp, sp, -4
+    sw zero, -64(s0)
+    addi sp, sp, -4
+    sw zero, -68(s0)
+    addi sp, sp, -4
+    sw zero, -72(s0)
+    addi sp, sp, -4
+    sw zero, -76(s0)
+    addi sp, sp, -4
+    sw zero, -80(s0)
+    addi sp, sp, -4
+    sw zero, -84(s0)
+    addi sp, sp, -4
+    sw zero, -88(s0)
+    addi sp, sp, -4
+    sw zero, -92(s0)
+    addi sp, sp, -4
+    sw zero, -96(s0)
+    addi sp, sp, -4
+    sw zero, -100(s0)
+    addi sp, sp, -4
+    sw zero, -104(s0)
+    addi sp, sp, -4
+    sw zero, -108(s0)
+    addi sp, sp, -4
+    sw zero, -112(s0)
+    addi sp, sp, -4
+    sw zero, -116(s0)
+    lw t0, -52(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 2
     sw t0, -4(sp)
     addi sp, sp, -4
     lw t0, 0(sp)
-    sw t0, -120(s0)
-    lw t0, -120(s0)
+    addi sp, sp, 4
+    li t1, -52
+    li t3, 4
+    mul t0, t0, t3
+    sub t0, t1, t0
     sw t0, -4(sp)
     addi sp, sp, -4
-    li t0, 0
+    lw t0, -52(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 3
     sw t0, -4(sp)
     addi sp, sp, -4
     lw t0, 0(sp)
     addi sp, sp, 4
-    lw t1, 0(sp)
-    addi sp, sp, 4
-    bne t1, t0, LXA
+    li t1, -52
+    li t3, 4
+    mul t0, t0, t3
+    sub t0, t1, t0
+    sw t0, -4(sp)
     addi sp, sp, -4
-    li t0, 0
-    sw t0, 0(sp)
-    beq zero, zero, EXITXA
-LXA:
-    addi sp, sp, -4
-    li t0, 1
-    sw t0, 0(sp)
-EXITXA:
     lw t0, 0(sp)
-    sw t0, -124(s0)
-    lw t0, -124(s0)
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw a0, 0(sp)
     addi sp, sp, 4
-    sw ra, -4(sp)
+    add t0, t0, s0
+    lw t1, 0(t0)
+    sw t1, -4(sp)
     addi sp, sp, -4
-    jal ra, delay
-    lw ra, 0(sp)
-    addi sp, sp, 4
-    lw t0, -120(s0)
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw a0, 0(sp)
-    addi sp, sp, 4
-    sw ra, -4(sp)
-    addi sp, sp, -4
-    jal ra, delay
-    lw ra, 0(sp)
-    addi sp, sp, 4
-    li t0, 1
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 26
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw a0, 0(sp)
-    addi sp, sp, 4
-    lw a1, 0(sp)
-    addi sp, sp, 4
-    sw ra, -4(sp)
-    addi sp, sp, -4
-    jal ra, digitalWrite
-    lw ra, 0(sp)
-    addi sp, sp, 4
-    li t0, 0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 26
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw a0, 0(sp)
-    addi sp, sp, 4
-    lw a1, 0(sp)
-    addi sp, sp, 4
-    sw ra, -4(sp)
-    addi sp, sp, -4
-    jal ra, digitalWrite
-    lw ra, 0(sp)
-    addi sp, sp, 4
     
     // BEGIN EPIL OGUE
     lw s11, -48(s0)
