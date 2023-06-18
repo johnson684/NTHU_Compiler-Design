@@ -11,6 +11,7 @@
     extern FILE* f_asm;
     int arg_cnt;
     int assignflag = 0;
+    int do_flag=0;
 %}
 
 %union {
@@ -299,6 +300,7 @@ array_expression
 // highest precedence, should not be separated
 primary_expression
     : IDENTIFIER  {
+        fprintf(f_asm, "\n/*    ID*/\n");
         $$=$1;
         int index = look_up_symbol($1);
         if(table[index].type == T_POINTER)is_array=1;
@@ -371,6 +373,7 @@ prefix_expression
         /*section B*/
         //int index = look_up_symbol($2);
         //fprintf(f_asm, "    lw t0, %d(s0)\n", table[index].offset * (-4) - 48);
+        fprintf(f_asm, "\n/*unary multiply*/\n");
         fprintf(f_asm, "    lw t0, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
         /*section B*/
@@ -420,7 +423,10 @@ additive_expression
             int index = look_up_symbol($1);
             $$=$1;
             if(dbg)printf("HELLO %s\n",table[index].name);
+            fprintf(f_asm, "\n/*array add*/\n");
             fprintf(f_asm, "    lw t0, 0(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, 4\n");
+            fprintf(f_asm, "    lw t2, 0(sp)\n");
             fprintf(f_asm, "    addi sp, sp, 4\n");
             fprintf(f_asm, "    li t1, %d\n", table[index].offset * (-4) - 48);
             fprintf(f_asm, "    li t3, 4\n");
@@ -429,6 +435,7 @@ additive_expression
             fprintf(f_asm, "    sw t0, -4(sp)\n");
             fprintf(f_asm, "    addi sp, sp, -4\n");
         }else {
+            fprintf(f_asm, "\n/*normal add*/\n");
             fprintf(f_asm, "    lw t0, 0(sp)\n");
             fprintf(f_asm, "    addi sp, sp, 4\n");
             fprintf(f_asm, "    lw t1, 0(sp)\n");
@@ -440,7 +447,19 @@ additive_expression
     }
     | additive_expression MINUS multiplicative_expression { 
         if(is_array) {
-
+            int index = look_up_symbol($1);
+            $$=$1;
+            if(dbg)printf("HELLO %s\n",table[index].name);
+            fprintf(f_asm, "\n/*array sub*/\n");
+            fprintf(f_asm, "    lw t0, 0(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, 4\n");
+            fprintf(f_asm, "    lw t2, 0(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, 4\n");
+            fprintf(f_asm, "    li t3, 4\n");
+            fprintf(f_asm, "    mul t0, t0, t3\n");
+            fprintf(f_asm, "    add t0, t2, t0\n");
+            fprintf(f_asm, "    sw t0, -4(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, -4\n");
         } else {
             fprintf(f_asm, "    lw t0, 0(sp)\n");
             fprintf(f_asm, "    addi sp, sp, 4\n");
@@ -460,7 +479,8 @@ relational_expression
         fprintf(f_asm, "    addi sp, sp, 4\n");
         fprintf(f_asm, "    lw t1, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
-        fprintf(f_asm, "    bge t1, t0, L%d\n", cur_label);
+        if(do_flag)fprintf(f_asm, "    bge t1, t0, L%d\n", cur_label-2);
+        else fprintf(f_asm, "    bge t1, t0, L%d\n", cur_label);
     }
     | relational_expression LESS_OR_EQUAL_THAN additive_expression     { 
 
@@ -512,6 +532,7 @@ equality_expression
 assignment_expression
     : equality_expression { $$ = $1;}
     | IDENTIFIER ASSIGN assignment_expression {
+        fprintf(f_asm, "\n/*    normal assign*/\n");
         $$=$1;
         int index = look_up_symbol($1);
         fprintf(f_asm, "    lw t0, 0(sp)\n");
@@ -522,13 +543,14 @@ assignment_expression
     |  assign_primary_expression ASSIGN assignment_expression {
         if(assignflag==0){
             int index = look_up_symbol($1);
+            fprintf(f_asm, "\n/*    pointer assign  */\n");
             fprintf(f_asm, "    lw t0, 0(sp)\n");
             fprintf(f_asm, "    addi sp, sp, 4\n");
             fprintf(f_asm, "    lw t1, %d(s0)\n", table[index].offset * (-4) - 48);
             fprintf(f_asm, "    add t1, s0, t1\n");
             fprintf(f_asm, "    sw t0, 0(t1)\n");
         }else if(assignflag==2){
-            //int index = look_up_symbol($1);
+            fprintf(f_asm, "\n/*    array pointer assign*/\n");
             fprintf(f_asm, "    lw t0, 0(sp)\n") ;
             fprintf(f_asm, "    addi sp, sp, 4\n");
             fprintf(f_asm, "    lw t1, 0(sp)\n");
@@ -539,6 +561,7 @@ assignment_expression
     }
     | IDENTIFIER L_SQ_BRACKET expression R_SQ_BRACKET ASSIGN assignment_expression  {
         int index = look_up_symbol($1);
+        fprintf(f_asm, "\n/*    array assign*/\n");
         fprintf(f_asm, "    lw t0, 0(sp)\n"); //
         fprintf(f_asm, "    addi sp, sp, 4\n");
         fprintf(f_asm, "    lw t1, 0(sp)\n");
@@ -650,8 +673,7 @@ if_statement
     } compound_statement {
         int tmp_label = pop_label();
         fprintf(f_asm, "EXIT%d:\n", tmp_label);
-        pop_up_symbol(cur_scope);
-        cur_scope--;
+        pop_up_symbol(cur_scope--);
     }
     ;
 
@@ -684,6 +706,7 @@ do_while_statement
     : DO {
         cur_scope++;
         cur_label++;
+        do_flag = 1;
         fprintf(f_asm, "DOWHILE%d:\n", cur_label);
         push_label(cur_label);  
     }statement WHILE L_BRACKET expression R_BRACKET SEMICOLON { 
@@ -692,6 +715,7 @@ do_while_statement
         fprintf(f_asm, "L%d:\n", tmp_label);
         pop_up_symbol(cur_scope);
         cur_scope--;
+        //do_flag = 0;
     }
     ;
 

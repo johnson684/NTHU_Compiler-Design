@@ -1,14 +1,24 @@
 void codegen();
 
 void codegen() {
-  int a = 58 / 17; /* a = 3 */
-  int b = a * 2 + 10; /* b = 16 */
-  int *c = &a; /* *c = 3 */
-  *c = *c + 1; /* *c = 4, a = 4 */
-  c = &b; /* *c = 16 */
-  *c = b / a; /* *c = 4, b = 4 */
-  digitalWrite(29, HIGH);
-  delay(a * 1000 + 1000); /* 5 seconds */
-  digitalWrite(29, LOW);
-  delay(b * 1000 - 250 * 8); /* 2 seconds */
+  int fib[7];
+  int i = 0;
+  do {
+    if (i == 0) {
+      fib[i] = 0;
+    } else {
+      if (i == 1) {
+        fib[i] = 1;
+      } else {
+        int *f1 = fib + i - 1, *f2 = fib + i - 2;
+        fib[i] = *f1 + *f2;
+      }
+    }
+    i = i + 1;
+  } while (i < 7);
+
+  digitalWrite(28, HIGH);
+  delay((fib[6] - fib[3]) * 1000); // fib[6] - fib[3] = 6
+  digitalWrite(28, LOW);
+  delay((fib[5] - fib[1]) * 1000); // fib[5] - fib[1] = 4
 }

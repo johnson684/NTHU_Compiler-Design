@@ -740,3 +740,24 @@ cd hw3
 ./test.sh
 cd hw3
 ./test.sh
+cd hw3
+./test.sh
+make clean
+./test.sh
+git add -A
+git commit -m "some bugs in B"
+git push
+./test.sh
+cd hw3
+./test.sh
+cd hw3
+./test.sh
+cd cdcdcdas
+cd hw3
+./test.sh
+cd hw3
+./test.sh
+cd hw3
+./test.sh
+cd hw3
+./test.sh

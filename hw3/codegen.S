@@ -19,7 +19,7 @@ codegen:
     addi sp, s0, -48 // update stack pointer
     // END PROLOGUE
     
-    li t0, 17
+    li t0, 7
     sw t0, -4(sp)
     addi sp, sp, -4
     addi sp, sp, -4
@@ -36,60 +36,385 @@ codegen:
     sw zero, -72(s0)
     addi sp, sp, -4
     sw zero, -76(s0)
+    li t0, 0
+    sw t0, -4(sp)
     addi sp, sp, -4
-    sw zero, -80(s0)
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    sw t0, -80(s0)
     addi sp, sp, -4
-    sw zero, -84(s0)
+DOWHILE1:
+
+/*    ID*/
+    lw t0, -80(s0)
+    sw t0, -4(sp)
     addi sp, sp, -4
-    sw zero, -88(s0)
+    li t0, 0
+    sw t0, -4(sp)
     addi sp, sp, -4
-    sw zero, -92(s0)
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    bne t1, t0, L2
+
+/*    ID*/
+    lw t0, -80(s0)
+    sw t0, -4(sp)
     addi sp, sp, -4
-    sw zero, -96(s0)
+    li t0, 0
+    sw t0, -4(sp)
     addi sp, sp, -4
-    sw zero, -100(s0)
+
+/*    array assign*/
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    li t2, -52
+    li t3, 4
+    mul t1, t1, t3
+    sub t2, t2, t1
+    add t2, s0, t2
+    sw t0, 0(t2)
+    beq zero, zero, EXIT2
+L2:
+
+/*    ID*/
+    lw t0, -80(s0)
+    sw t0, -4(sp)
     addi sp, sp, -4
-    sw zero, -104(s0)
+    li t0, 1
+    sw t0, -4(sp)
     addi sp, sp, -4
-    sw zero, -108(s0)
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    bne t1, t0, L3
+
+/*    ID*/
+    lw t0, -80(s0)
+    sw t0, -4(sp)
     addi sp, sp, -4
-    sw zero, -112(s0)
+    li t0, 1
+    sw t0, -4(sp)
     addi sp, sp, -4
-    sw zero, -116(s0)
+
+/*    array assign*/
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    li t2, -52
+    li t3, 4
+    mul t1, t1, t3
+    sub t2, t2, t1
+    add t2, s0, t2
+    sw t0, 0(t2)
+    beq zero, zero, EXIT3
+L3:
+
+/*    ID*/
     lw t0, -52(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+
+/*    ID*/
+    lw t0, -80(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+
+/*array add*/
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t2, 0(sp)
+    addi sp, sp, 4
+    li t1, -52
+    li t3, 4
+    mul t0, t0, t3
+    sub t0, t1, t0
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 1
+    sw t0, -4(sp)
+    addi sp, sp, -4
+
+/*array sub*/
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t2, 0(sp)
+    addi sp, sp, 4
+    li t3, 4
+    mul t0, t0, t3
+    add t0, t2, t0
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    sw t0, -84(s0)
+    addi sp, sp, -4
+
+/*    ID*/
+    lw t0, -52(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+
+/*    ID*/
+    lw t0, -80(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+
+/*array add*/
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t2, 0(sp)
+    addi sp, sp, 4
+    li t1, -52
+    li t3, 4
+    mul t0, t0, t3
+    sub t0, t1, t0
     sw t0, -4(sp)
     addi sp, sp, -4
     li t0, 2
     sw t0, -4(sp)
     addi sp, sp, -4
+
+/*array sub*/
     lw t0, 0(sp)
     addi sp, sp, 4
-    li t1, -52
+    lw t2, 0(sp)
+    addi sp, sp, 4
     li t3, 4
     mul t0, t0, t3
-    sub t0, t1, t0
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    lw t0, -52(s0)
-    sw t0, -4(sp)
-    addi sp, sp, -4
-    li t0, 3
+    add t0, t2, t0
     sw t0, -4(sp)
     addi sp, sp, -4
     lw t0, 0(sp)
     addi sp, sp, 4
-    li t1, -52
-    li t3, 4
-    mul t0, t0, t3
-    sub t0, t1, t0
+    sw t0, -88(s0)
+    addi sp, sp, -4
+
+/*    ID*/
+    lw t0, -80(s0)
     sw t0, -4(sp)
     addi sp, sp, -4
+
+/*    ID*/
+    lw t0, -84(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+
+/*unary multiply*/
     lw t0, 0(sp)
     addi sp, sp, 4
     add t0, t0, s0
     lw t1, 0(t0)
     sw t1, -4(sp)
     addi sp, sp, -4
+
+/*    ID*/
+    lw t0, -88(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+
+/*unary multiply*/
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    add t0, t0, s0
+    lw t1, 0(t0)
+    sw t1, -4(sp)
+    addi sp, sp, -4
+
+/*normal add*/
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    add t0, t0, t1
+    sw t0, -4(sp)
+    addi sp, sp, -4
+
+/*    array assign*/
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    li t2, -52
+    li t3, 4
+    mul t1, t1, t3
+    sub t2, t2, t1
+    add t2, s0, t2
+    sw t0, 0(t2)
+EXIT3:
+EXIT2:
+
+/*    ID*/
+    lw t0, -80(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 1
+    sw t0, -4(sp)
+    addi sp, sp, -4
+
+/*normal add*/
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    add t0, t0, t1
+    sw t0, -4(sp)
+    addi sp, sp, -4
+
+/*    normal assign*/
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    sw t0, -80(s0)
+
+/*    ID*/
+    lw t0, -80(s0)
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 7
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    bge t1, t0, L1
+    beq zero, zero, DOWHILE1
+L1:
+    li t0, 1
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 28
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw a0, 0(sp)
+    addi sp, sp, 4
+    lw a1, 0(sp)
+    addi sp, sp, 4
+    sw ra, -4(sp)
+    addi sp, sp, -4
+    jal ra, digitalWrite
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    li t0, 6
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, -52
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    li t2, 4
+    mul t1, t1, t2
+    sub t0, t0, t1
+    add t0, s0, t0
+    lw t1, 0(t0)
+    sw t1, -4(sp)
+    addi sp, sp, -4
+    li t0, 3
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, -52
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    li t2, 4
+    mul t1, t1, t2
+    sub t0, t0, t1
+    add t0, s0, t0
+    lw t1, 0(t0)
+    sw t1, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    sub t0, t1, t0
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 1000
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    mul t0, t0, t1
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw a0, 0(sp)
+    addi sp, sp, 4
+    sw ra, -4(sp)
+    addi sp, sp, -4
+    jal ra, delay
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    li t0, 0
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 28
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw a0, 0(sp)
+    addi sp, sp, 4
+    lw a1, 0(sp)
+    addi sp, sp, 4
+    sw ra, -4(sp)
+    addi sp, sp, -4
+    jal ra, digitalWrite
+    lw ra, 0(sp)
+    addi sp, sp, 4
+    li t0, 5
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, -52
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    li t2, 4
+    mul t1, t1, t2
+    sub t0, t0, t1
+    add t0, s0, t0
+    lw t1, 0(t0)
+    sw t1, -4(sp)
+    addi sp, sp, -4
+    li t0, 1
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, -52
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    li t2, 4
+    mul t1, t1, t2
+    sub t0, t0, t1
+    add t0, s0, t0
+    lw t1, 0(t0)
+    sw t1, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    sub t0, t1, t0
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    li t0, 1000
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw t0, 0(sp)
+    addi sp, sp, 4
+    lw t1, 0(sp)
+    addi sp, sp, 4
+    mul t0, t0, t1
+    sw t0, -4(sp)
+    addi sp, sp, -4
+    lw a0, 0(sp)
+    addi sp, sp, 4
+    sw ra, -4(sp)
+    addi sp, sp, -4
+    jal ra, delay
+    lw ra, 0(sp)
+    addi sp, sp, 4
     
     // BEGIN EPIL OGUE
     lw s11, -48(s0)

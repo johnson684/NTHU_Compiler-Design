@@ -34,20 +34,21 @@
     extern FILE* f_asm;
     int arg_cnt;
     int assignflag = 0;
+    int do_flag=0;
 #ifdef YYSTYPE
 #undef  YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
 #endif
 #ifndef YYSTYPE_IS_DECLARED
 #define YYSTYPE_IS_DECLARED 1
-#line 16 "parser.y"
+#line 17 "parser.y"
 typedef union YYSTYPE {
   int intval;
   double dval;
   char* stringval;
 } YYSTYPE;
 #endif /* !YYSTYPE_IS_DECLARED */
-#line 51 "y.tab.c"
+#line 52 "y.tab.c"
 
 /* compatibility with bison */
 #ifdef YYPARSE_PARAM
@@ -884,7 +885,7 @@ static YYINT  *yylexp = 0;
 
 static YYINT  *yylexemes = 0;
 #endif /* YYBTYACC */
-#line 765 "parser.y"
+#line 789 "parser.y"
 
 
 int main(void) {
@@ -900,7 +901,7 @@ int yyerror(char *s) {
     fprintf(stderr, "%s\n", s);
     return 0;
 }
-#line 904 "y.tab.c"
+#line 905 "y.tab.c"
 
 /* For use in generated program */
 #define yydepth (int)(yystack.s_mark - yystack.s_base)
@@ -1571,161 +1572,161 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 69 "parser.y"
+#line 70 "parser.y"
 	{  }
-#line 1577 "y.tab.c"
+#line 1578 "y.tab.c"
 break;
 case 2:
-#line 72 "parser.y"
+#line 73 "parser.y"
 	{  }
-#line 1582 "y.tab.c"
+#line 1583 "y.tab.c"
 break;
 case 3:
-#line 73 "parser.y"
+#line 74 "parser.y"
 	{ }
-#line 1587 "y.tab.c"
+#line 1588 "y.tab.c"
 break;
 case 5:
-#line 78 "parser.y"
+#line 79 "parser.y"
 	{ }
-#line 1592 "y.tab.c"
+#line 1593 "y.tab.c"
 break;
 case 6:
-#line 82 "parser.y"
+#line 83 "parser.y"
 	{
         cur_scope++;
         set_scope_and_offset_of_param(yystack.l_mark[-1].stringval);
         code_gen_func_header(yystack.l_mark[-3].stringval);
     }
-#line 1601 "y.tab.c"
+#line 1602 "y.tab.c"
 break;
 case 7:
-#line 87 "parser.y"
+#line 88 "parser.y"
 	{ 
         pop_up_symbol(cur_scope);
         cur_scope--;
         code_gen_at_end_of_function_body(yystack.l_mark[-5].stringval);
     }
-#line 1610 "y.tab.c"
+#line 1611 "y.tab.c"
 break;
 case 8:
-#line 92 "parser.y"
+#line 93 "parser.y"
 	{
         cur_scope++;
         code_gen_func_header(yystack.l_mark[-2].stringval);
     }
-#line 1618 "y.tab.c"
+#line 1619 "y.tab.c"
 break;
 case 9:
-#line 96 "parser.y"
+#line 97 "parser.y"
 	{ 
         pop_up_symbol(cur_scope);
         cur_scope--;
         code_gen_at_end_of_function_body(yystack.l_mark[-4].stringval);
     }
-#line 1627 "y.tab.c"
+#line 1628 "y.tab.c"
 break;
 case 10:
-#line 102 "parser.y"
-	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 1632 "y.tab.c"
-break;
-case 11:
 #line 103 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 1637 "y.tab.c"
+#line 1633 "y.tab.c"
 break;
-case 12:
+case 11:
 #line 104 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 1642 "y.tab.c"
+#line 1638 "y.tab.c"
+break;
+case 12:
+#line 105 "parser.y"
+	{ yyval.stringval = yystack.l_mark[0].stringval;}
+#line 1643 "y.tab.c"
 break;
 case 13:
-#line 107 "parser.y"
+#line 108 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval ;}
-#line 1647 "y.tab.c"
+#line 1648 "y.tab.c"
 break;
 case 14:
-#line 109 "parser.y"
+#line 110 "parser.y"
 	{ 
 
     }
-#line 1654 "y.tab.c"
+#line 1655 "y.tab.c"
 break;
 case 15:
-#line 113 "parser.y"
+#line 114 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval ;}
-#line 1659 "y.tab.c"
+#line 1660 "y.tab.c"
 break;
 case 16:
-#line 115 "parser.y"
+#line 116 "parser.y"
 	{ 
 
     }
-#line 1666 "y.tab.c"
+#line 1667 "y.tab.c"
 break;
 case 26:
-#line 133 "parser.y"
+#line 134 "parser.y"
 	{
         yyval.intval=yystack.l_mark[0].intval;
         fprintf(f_asm, "    li t0, %d\n", yystack.l_mark[0].intval);
         fprintf(f_asm, "    sw t0, -4(sp)\n");
         fprintf(f_asm, "    addi sp, sp, -4\n");
       }
-#line 1676 "y.tab.c"
+#line 1677 "y.tab.c"
 break;
 case 27:
-#line 139 "parser.y"
+#line 140 "parser.y"
 	{
         /* no need */
     }
-#line 1683 "y.tab.c"
+#line 1684 "y.tab.c"
 break;
 case 28:
-#line 142 "parser.y"
+#line 143 "parser.y"
 	{
         /* no need */
     }
-#line 1690 "y.tab.c"
+#line 1691 "y.tab.c"
 break;
 case 29:
-#line 145 "parser.y"
+#line 146 "parser.y"
 	{
         /* no need */
     }
-#line 1697 "y.tab.c"
+#line 1698 "y.tab.c"
 break;
 case 30:
-#line 150 "parser.y"
+#line 151 "parser.y"
 	{
 
 }
-#line 1704 "y.tab.c"
+#line 1705 "y.tab.c"
 break;
 case 31:
-#line 156 "parser.y"
+#line 157 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval; }
-#line 1709 "y.tab.c"
+#line 1710 "y.tab.c"
 break;
 case 32:
-#line 157 "parser.y"
+#line 158 "parser.y"
 	{ 
 
     }
-#line 1716 "y.tab.c"
+#line 1717 "y.tab.c"
 break;
 case 33:
-#line 164 "parser.y"
+#line 165 "parser.y"
 	{ 
         yyval.stringval = install_symbol(yystack.l_mark[0].stringval);
         int index = look_up_symbol(yystack.l_mark[0].stringval);
         fprintf(f_asm, "    addi sp, sp, -4\n");
         fprintf(f_asm, "    sw zero, %d(s0)\n", table[index].offset * (-4) - 48);
     }
-#line 1726 "y.tab.c"
+#line 1727 "y.tab.c"
 break;
 case 34:
-#line 170 "parser.y"
+#line 171 "parser.y"
 	{ 
         yyval.stringval = install_symbol(yystack.l_mark[-2].stringval);
         int index = look_up_symbol(yystack.l_mark[-2].stringval);
@@ -1734,186 +1735,187 @@ case 34:
         fprintf(f_asm, "    sw t0, %d(s0)\n", table[index].offset * (-4) - 48);
         fprintf(f_asm, "    addi sp, sp, -4\n");
     }
-#line 1738 "y.tab.c"
+#line 1739 "y.tab.c"
 break;
 case 35:
-#line 182 "parser.y"
-	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 1743 "y.tab.c"
-break;
-case 36:
 #line 183 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 1748 "y.tab.c"
+#line 1744 "y.tab.c"
+break;
+case 36:
+#line 184 "parser.y"
+	{ yyval.stringval = yystack.l_mark[0].stringval;}
+#line 1749 "y.tab.c"
 break;
 case 37:
-#line 189 "parser.y"
+#line 190 "parser.y"
 	{
 
 }
-#line 1755 "y.tab.c"
+#line 1756 "y.tab.c"
 break;
 case 38:
-#line 195 "parser.y"
+#line 196 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval; }
-#line 1760 "y.tab.c"
+#line 1761 "y.tab.c"
 break;
 case 39:
-#line 196 "parser.y"
+#line 197 "parser.y"
 	{ 
 
     }
-#line 1767 "y.tab.c"
+#line 1768 "y.tab.c"
 break;
 case 40:
-#line 203 "parser.y"
+#line 204 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval; }
-#line 1772 "y.tab.c"
+#line 1773 "y.tab.c"
 break;
 case 41:
-#line 204 "parser.y"
+#line 205 "parser.y"
 	{ 
 
     }
-#line 1779 "y.tab.c"
+#line 1780 "y.tab.c"
 break;
 case 42:
-#line 211 "parser.y"
+#line 212 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval; }
-#line 1784 "y.tab.c"
+#line 1785 "y.tab.c"
 break;
 case 43:
-#line 212 "parser.y"
+#line 213 "parser.y"
 	{ 
 
     }
-#line 1791 "y.tab.c"
+#line 1792 "y.tab.c"
 break;
 case 44:
-#line 219 "parser.y"
+#line 220 "parser.y"
 	{
         fprintf(f_asm, ".global %s\n", yystack.l_mark[-2].stringval);
     }
-#line 1798 "y.tab.c"
+#line 1799 "y.tab.c"
 break;
 case 45:
-#line 222 "parser.y"
+#line 223 "parser.y"
 	{
         fprintf(f_asm, ".global %s\n", yystack.l_mark[-3].stringval);
     }
-#line 1805 "y.tab.c"
+#line 1806 "y.tab.c"
 break;
 case 46:
-#line 228 "parser.y"
+#line 229 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval; }
-#line 1810 "y.tab.c"
+#line 1811 "y.tab.c"
 break;
 case 47:
-#line 229 "parser.y"
+#line 230 "parser.y"
 	{ 
 
     }
-#line 1817 "y.tab.c"
+#line 1818 "y.tab.c"
 break;
 case 48:
-#line 235 "parser.y"
+#line 236 "parser.y"
 	{ 
 
     }
-#line 1824 "y.tab.c"
+#line 1825 "y.tab.c"
 break;
 case 49:
-#line 242 "parser.y"
+#line 243 "parser.y"
 	{
 
 }
-#line 1831 "y.tab.c"
+#line 1832 "y.tab.c"
 break;
 case 50:
-#line 248 "parser.y"
+#line 249 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval; }
-#line 1836 "y.tab.c"
+#line 1837 "y.tab.c"
 break;
 case 51:
-#line 249 "parser.y"
+#line 250 "parser.y"
 	{ 
 
     }
-#line 1843 "y.tab.c"
+#line 1844 "y.tab.c"
 break;
 case 52:
-#line 256 "parser.y"
+#line 257 "parser.y"
 	{ 
         
     }
-#line 1850 "y.tab.c"
+#line 1851 "y.tab.c"
 break;
 case 53:
-#line 259 "parser.y"
+#line 260 "parser.y"
 	{ 
         /*no need*/
         /*$$ = install_symbol($1);*/
     }
-#line 1858 "y.tab.c"
+#line 1859 "y.tab.c"
 break;
 case 54:
-#line 266 "parser.y"
+#line 267 "parser.y"
 	{
         yyval.stringval = install_array_symbol(yystack.l_mark[-3].stringval,yystack.l_mark[-1].intval); 
         
     }
-#line 1866 "y.tab.c"
+#line 1867 "y.tab.c"
 break;
 case 55:
-#line 270 "parser.y"
+#line 271 "parser.y"
 	{
         /* no need */
     }
-#line 1873 "y.tab.c"
+#line 1874 "y.tab.c"
 break;
 case 56:
-#line 276 "parser.y"
+#line 277 "parser.y"
 	{ 
 
      }
-#line 1880 "y.tab.c"
+#line 1881 "y.tab.c"
 break;
 case 57:
-#line 279 "parser.y"
+#line 280 "parser.y"
 	{
 
     }
-#line 1887 "y.tab.c"
+#line 1888 "y.tab.c"
 break;
 case 58:
-#line 282 "parser.y"
+#line 283 "parser.y"
 	{
 
     }
-#line 1894 "y.tab.c"
+#line 1895 "y.tab.c"
 break;
 case 59:
-#line 285 "parser.y"
+#line 286 "parser.y"
 	{
 
     }
-#line 1901 "y.tab.c"
+#line 1902 "y.tab.c"
 break;
 case 60:
-#line 291 "parser.y"
+#line 292 "parser.y"
 	{yyval.stringval = yystack.l_mark[0].stringval;}
-#line 1906 "y.tab.c"
+#line 1907 "y.tab.c"
 break;
 case 61:
-#line 292 "parser.y"
+#line 293 "parser.y"
 	{
 
     }
-#line 1913 "y.tab.c"
+#line 1914 "y.tab.c"
 break;
 case 62:
-#line 301 "parser.y"
+#line 302 "parser.y"
 	{
+        fprintf(f_asm, "\n/*    ID*/\n");
         yyval.stringval=yystack.l_mark[0].stringval;
         int index = look_up_symbol(yystack.l_mark[0].stringval);
         if(table[index].type == T_POINTER)is_array=1;
@@ -1934,24 +1936,24 @@ case 62:
         }
 
     }
-#line 1938 "y.tab.c"
+#line 1940 "y.tab.c"
 break;
 case 63:
-#line 322 "parser.y"
+#line 324 "parser.y"
 	{ 
 
     }
-#line 1945 "y.tab.c"
+#line 1947 "y.tab.c"
 break;
 case 64:
-#line 325 "parser.y"
+#line 327 "parser.y"
 	{ 
         
     }
-#line 1952 "y.tab.c"
+#line 1954 "y.tab.c"
 break;
 case 65:
-#line 328 "parser.y"
+#line 330 "parser.y"
 	{
         int index = look_up_symbol(yystack.l_mark[-3].stringval);
         fprintf(f_asm, "    li t0, %d\n", table[index].offset * (-4) - 48);
@@ -1965,45 +1967,45 @@ case 65:
         fprintf(f_asm, "    sw t1, -4(sp)\n");
         fprintf(f_asm, "    addi sp, sp, -4\n");
     }
-#line 1969 "y.tab.c"
+#line 1971 "y.tab.c"
 break;
 case 66:
-#line 345 "parser.y"
+#line 347 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 1974 "y.tab.c"
+#line 1976 "y.tab.c"
 break;
 case 67:
-#line 346 "parser.y"
+#line 348 "parser.y"
 	{ 
 
     }
-#line 1981 "y.tab.c"
+#line 1983 "y.tab.c"
 break;
 case 68:
-#line 352 "parser.y"
+#line 354 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 1986 "y.tab.c"
+#line 1988 "y.tab.c"
 break;
 case 69:
-#line 353 "parser.y"
+#line 355 "parser.y"
 	{ 
 
     }
-#line 1993 "y.tab.c"
+#line 1995 "y.tab.c"
 break;
 case 70:
-#line 356 "parser.y"
+#line 358 "parser.y"
 	{ 
     }
-#line 1999 "y.tab.c"
+#line 2001 "y.tab.c"
 break;
 case 71:
-#line 361 "parser.y"
+#line 363 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2004 "y.tab.c"
+#line 2006 "y.tab.c"
 break;
 case 72:
-#line 362 "parser.y"
+#line 364 "parser.y"
 	{ 
         fprintf(f_asm, "    lw t0, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
@@ -2012,14 +2014,15 @@ case 72:
         fprintf(f_asm, "    addi sp, sp, -4\n");
         
     }
-#line 2016 "y.tab.c"
+#line 2018 "y.tab.c"
 break;
 case 73:
-#line 370 "parser.y"
+#line 372 "parser.y"
 	{ 
         /*section B*/
         /*int index = look_up_symbol($2);*/
         /*fprintf(f_asm, "    lw t0, %d(s0)\n", table[index].offset * (-4) - 48);*/
+        fprintf(f_asm, "\n/*unary multiply*/\n");
         fprintf(f_asm, "    lw t0, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
         /*section B*/
@@ -2030,25 +2033,25 @@ case 73:
         
         
     }
-#line 2034 "y.tab.c"
+#line 2037 "y.tab.c"
 break;
 case 74:
-#line 384 "parser.y"
+#line 387 "parser.y"
 	{ 
         int index = look_up_symbol(yystack.l_mark[0].stringval);
         fprintf(f_asm, "    li t0, %d\n", table[index].offset * (-4) - 48);
         fprintf(f_asm, "    sw t0, -4(sp)\n"); 
         fprintf(f_asm, "    addi sp, sp, -4\n");
     }
-#line 2044 "y.tab.c"
+#line 2047 "y.tab.c"
 break;
 case 75:
-#line 395 "parser.y"
+#line 398 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2049 "y.tab.c"
+#line 2052 "y.tab.c"
 break;
 case 76:
-#line 396 "parser.y"
+#line 399 "parser.y"
 	{ 
         fprintf(f_asm, "    lw t0, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
@@ -2058,10 +2061,10 @@ case 76:
         fprintf(f_asm, "    sw t0, -4(sp)\n");
         fprintf(f_asm, "    addi sp, sp, -4\n");
     }
-#line 2062 "y.tab.c"
+#line 2065 "y.tab.c"
 break;
 case 77:
-#line 405 "parser.y"
+#line 408 "parser.y"
 	{ 
         fprintf(f_asm, "    lw t0, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
@@ -2071,21 +2074,24 @@ case 77:
         fprintf(f_asm, "    sw t0, -4(sp)\n");
         fprintf(f_asm, "    addi sp, sp, -4\n");
     }
-#line 2075 "y.tab.c"
+#line 2078 "y.tab.c"
 break;
 case 78:
-#line 417 "parser.y"
+#line 420 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2080 "y.tab.c"
+#line 2083 "y.tab.c"
 break;
 case 79:
-#line 418 "parser.y"
+#line 421 "parser.y"
 	{ 
         if(is_array){
             int index = look_up_symbol(yystack.l_mark[-2].stringval);
             yyval.stringval=yystack.l_mark[-2].stringval;
             if(dbg)printf("HELLO %s\n",table[index].name);
+            fprintf(f_asm, "\n/*array add*/\n");
             fprintf(f_asm, "    lw t0, 0(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, 4\n");
+            fprintf(f_asm, "    lw t2, 0(sp)\n");
             fprintf(f_asm, "    addi sp, sp, 4\n");
             fprintf(f_asm, "    li t1, %d\n", table[index].offset * (-4) - 48);
             fprintf(f_asm, "    li t3, 4\n");
@@ -2094,6 +2100,7 @@ case 79:
             fprintf(f_asm, "    sw t0, -4(sp)\n");
             fprintf(f_asm, "    addi sp, sp, -4\n");
         }else {
+            fprintf(f_asm, "\n/*normal add*/\n");
             fprintf(f_asm, "    lw t0, 0(sp)\n");
             fprintf(f_asm, "    addi sp, sp, 4\n");
             fprintf(f_asm, "    lw t1, 0(sp)\n");
@@ -2103,13 +2110,25 @@ case 79:
             fprintf(f_asm, "    addi sp, sp, -4\n");
         }
     }
-#line 2107 "y.tab.c"
+#line 2114 "y.tab.c"
 break;
 case 80:
-#line 441 "parser.y"
+#line 448 "parser.y"
 	{ 
         if(is_array) {
-
+            int index = look_up_symbol(yystack.l_mark[-2].stringval);
+            yyval.stringval=yystack.l_mark[-2].stringval;
+            if(dbg)printf("HELLO %s\n",table[index].name);
+            fprintf(f_asm, "\n/*array sub*/\n");
+            fprintf(f_asm, "    lw t0, 0(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, 4\n");
+            fprintf(f_asm, "    lw t2, 0(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, 4\n");
+            fprintf(f_asm, "    li t3, 4\n");
+            fprintf(f_asm, "    mul t0, t0, t3\n");
+            fprintf(f_asm, "    add t0, t2, t0\n");
+            fprintf(f_asm, "    sw t0, -4(sp)\n");
+            fprintf(f_asm, "    addi sp, sp, -4\n");
         } else {
             fprintf(f_asm, "    lw t0, 0(sp)\n");
             fprintf(f_asm, "    addi sp, sp, 4\n");
@@ -2120,52 +2139,53 @@ case 80:
             fprintf(f_asm, "    addi sp, sp, -4\n");
         }
     }
-#line 2124 "y.tab.c"
+#line 2143 "y.tab.c"
 break;
 case 81:
-#line 457 "parser.y"
+#line 476 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2129 "y.tab.c"
+#line 2148 "y.tab.c"
 break;
 case 82:
-#line 458 "parser.y"
+#line 477 "parser.y"
 	{ 
         fprintf(f_asm, "    lw t0, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
         fprintf(f_asm, "    lw t1, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
-        fprintf(f_asm, "    bge t1, t0, L%d\n", cur_label);
+        if(do_flag)fprintf(f_asm, "    bge t1, t0, L%d\n", cur_label-2);
+        else fprintf(f_asm, "    bge t1, t0, L%d\n", cur_label);
     }
-#line 2140 "y.tab.c"
+#line 2160 "y.tab.c"
 break;
 case 83:
-#line 465 "parser.y"
+#line 485 "parser.y"
 	{ 
 
     }
-#line 2147 "y.tab.c"
+#line 2167 "y.tab.c"
 break;
 case 84:
-#line 468 "parser.y"
+#line 488 "parser.y"
 	{ 
 
     }
-#line 2154 "y.tab.c"
+#line 2174 "y.tab.c"
 break;
 case 85:
-#line 471 "parser.y"
+#line 491 "parser.y"
 	{ 
 
     }
-#line 2161 "y.tab.c"
+#line 2181 "y.tab.c"
 break;
 case 86:
-#line 477 "parser.y"
+#line 497 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2166 "y.tab.c"
+#line 2186 "y.tab.c"
 break;
 case 87:
-#line 478 "parser.y"
+#line 498 "parser.y"
 	{ 
         fprintf(f_asm, "    lw t0, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
@@ -2173,10 +2193,10 @@ case 87:
         fprintf(f_asm, "    addi sp, sp, 4\n");
         fprintf(f_asm, "    bne t1, t0, L%d\n", cur_label);
     }
-#line 2177 "y.tab.c"
+#line 2197 "y.tab.c"
 break;
 case 88:
-#line 485 "parser.y"
+#line 505 "parser.y"
 	{ 
         if (in_if == 1) {
             fprintf(f_asm, "    lw t0, 0(sp)\n");
@@ -2201,16 +2221,17 @@ case 88:
             fprintf(f_asm, "EXITXA:\n");
         }
     }
-#line 2205 "y.tab.c"
+#line 2225 "y.tab.c"
 break;
 case 89:
-#line 513 "parser.y"
+#line 533 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2210 "y.tab.c"
+#line 2230 "y.tab.c"
 break;
 case 90:
-#line 514 "parser.y"
+#line 534 "parser.y"
 	{
+        fprintf(f_asm, "\n/*    normal assign*/\n");
         yyval.stringval=yystack.l_mark[-2].stringval;
         int index = look_up_symbol(yystack.l_mark[-2].stringval);
         fprintf(f_asm, "    lw t0, 0(sp)\n");
@@ -2218,34 +2239,36 @@ case 90:
         fprintf(f_asm, "    sw t0, %d(s0)\n", table[index].offset * (-4) - 48);
 
     }
-#line 2222 "y.tab.c"
+#line 2243 "y.tab.c"
 break;
 case 91:
-#line 522 "parser.y"
+#line 543 "parser.y"
 	{
         if(assignflag==0){
             int index = look_up_symbol(yystack.l_mark[-2].stringval);
+            fprintf(f_asm, "\n/*    pointer assign  */\n");
             fprintf(f_asm, "    lw t0, 0(sp)\n");
             fprintf(f_asm, "    addi sp, sp, 4\n");
             fprintf(f_asm, "    lw t1, %d(s0)\n", table[index].offset * (-4) - 48);
             fprintf(f_asm, "    add t1, s0, t1\n");
             fprintf(f_asm, "    sw t0, 0(t1)\n");
         }else if(assignflag==2){
-            /*int index = look_up_symbol($1);*/
-           /* fprintf(f_asm, "    lw t0, 0(sp)\n");
+            fprintf(f_asm, "\n/*    array pointer assign*/\n");
+            fprintf(f_asm, "    lw t0, 0(sp)\n") ;
             fprintf(f_asm, "    addi sp, sp, 4\n");
             fprintf(f_asm, "    lw t1, 0(sp)\n");
             fprintf(f_asm, "    addi sp, sp, 4\n");
             fprintf(f_asm, "    add t1, s0, t1\n");
-            fprintf(f_asm, "    sw t0, 0(t1)\n");*/
+            fprintf(f_asm, "    sw t0, 0(t1)\n");
         }
     }
-#line 2244 "y.tab.c"
+#line 2266 "y.tab.c"
 break;
 case 92:
-#line 540 "parser.y"
+#line 562 "parser.y"
 	{
         int index = look_up_symbol(yystack.l_mark[-5].stringval);
+        fprintf(f_asm, "\n/*    array assign*/\n");
         fprintf(f_asm, "    lw t0, 0(sp)\n"); /**/
         fprintf(f_asm, "    addi sp, sp, 4\n");
         fprintf(f_asm, "    lw t1, 0(sp)\n");
@@ -2257,69 +2280,69 @@ case 92:
         fprintf(f_asm, "    add t2, s0, t2\n");
         fprintf(f_asm, "    sw t0, 0(t2)\n");
     }
-#line 2261 "y.tab.c"
+#line 2284 "y.tab.c"
 break;
 case 93:
-#line 555 "parser.y"
+#line 578 "parser.y"
 	{
         assignflag=0;
         yyval.stringval = yystack.l_mark[0].stringval;
     }
-#line 2269 "y.tab.c"
+#line 2292 "y.tab.c"
 break;
 case 94:
-#line 559 "parser.y"
+#line 582 "parser.y"
 	{ 
         assignflag=2;
         yyval.stringval=yystack.l_mark[-1].stringval;
     }
-#line 2277 "y.tab.c"
+#line 2300 "y.tab.c"
 break;
 case 95:
-#line 568 "parser.y"
+#line 591 "parser.y"
 	{
         is_array = 0;
         yyval.stringval=yystack.l_mark[0].stringval;
     }
-#line 2285 "y.tab.c"
+#line 2308 "y.tab.c"
 break;
 case 96:
-#line 577 "parser.y"
+#line 600 "parser.y"
 	{yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2290 "y.tab.c"
+#line 2313 "y.tab.c"
 break;
 case 97:
-#line 578 "parser.y"
+#line 601 "parser.y"
 	{yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2295 "y.tab.c"
+#line 2318 "y.tab.c"
 break;
 case 98:
-#line 579 "parser.y"
+#line 602 "parser.y"
 	{yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2300 "y.tab.c"
+#line 2323 "y.tab.c"
 break;
 case 99:
-#line 580 "parser.y"
+#line 603 "parser.y"
 	{yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2305 "y.tab.c"
+#line 2328 "y.tab.c"
 break;
 case 100:
-#line 581 "parser.y"
+#line 604 "parser.y"
 	{yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2310 "y.tab.c"
+#line 2333 "y.tab.c"
 break;
 case 101:
-#line 582 "parser.y"
+#line 605 "parser.y"
 	{yyval.stringval = yyval.stringval;}
-#line 2315 "y.tab.c"
+#line 2338 "y.tab.c"
 break;
 case 102:
-#line 583 "parser.y"
+#line 606 "parser.y"
 	{yyval.stringval = yyval.stringval;}
-#line 2320 "y.tab.c"
+#line 2343 "y.tab.c"
 break;
 case 103:
-#line 587 "parser.y"
+#line 610 "parser.y"
 	{
         fprintf(f_asm, "    li t0, %d\n", yystack.l_mark[-2].intval);
         fprintf(f_asm, "    sw t0, -4(sp)\n");
@@ -2337,10 +2360,10 @@ case 103:
         fprintf(f_asm, "    lw ra, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
     }
-#line 2341 "y.tab.c"
+#line 2364 "y.tab.c"
 break;
 case 104:
-#line 607 "parser.y"
+#line 630 "parser.y"
 	{
         fprintf(f_asm, "    lw a0, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
@@ -2350,86 +2373,85 @@ case 104:
         fprintf(f_asm, "    lw ra, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");
     }
-#line 2354 "y.tab.c"
+#line 2377 "y.tab.c"
 break;
 case 105:
-#line 619 "parser.y"
+#line 642 "parser.y"
 	{ 
 
     }
-#line 2361 "y.tab.c"
+#line 2384 "y.tab.c"
 break;
 case 106:
-#line 625 "parser.y"
+#line 648 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2366 "y.tab.c"
+#line 2389 "y.tab.c"
 break;
 case 107:
-#line 628 "parser.y"
+#line 651 "parser.y"
 	{
         cur_scope++;
         cur_label++;
         in_if = 1;
     }
-#line 2375 "y.tab.c"
+#line 2398 "y.tab.c"
 break;
 case 108:
-#line 632 "parser.y"
+#line 655 "parser.y"
 	{
         push_label(cur_label);
         /*fprintf(f_asm, "    lw t0, 0(sp)\n");
         fprintf(f_asm, "    addi sp, sp, 4\n");*/
         in_if = 0;
     }
-#line 2385 "y.tab.c"
+#line 2408 "y.tab.c"
 break;
 case 109:
-#line 639 "parser.y"
+#line 662 "parser.y"
 	{ 
         int tmp_label = pop_label();
         fprintf(f_asm, "L%d:\n", tmp_label);
         pop_up_symbol(cur_scope);
         cur_scope--;
     }
-#line 2395 "y.tab.c"
+#line 2418 "y.tab.c"
 break;
 case 110:
-#line 645 "parser.y"
+#line 668 "parser.y"
 	{
         int tmp_label = pop_label();
         fprintf(f_asm, "    beq zero, zero, EXIT%d\n", tmp_label);
         fprintf(f_asm, "L%d:\n", tmp_label);
         push_label(tmp_label);
     }
-#line 2405 "y.tab.c"
+#line 2428 "y.tab.c"
 break;
 case 111:
-#line 650 "parser.y"
+#line 673 "parser.y"
 	{
         int tmp_label = pop_label();
         fprintf(f_asm, "EXIT%d:\n", tmp_label);
-        pop_up_symbol(cur_scope);
-        cur_scope--;
+        pop_up_symbol(cur_scope--);
     }
-#line 2415 "y.tab.c"
+#line 2437 "y.tab.c"
 break;
 case 112:
-#line 660 "parser.y"
+#line 682 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2420 "y.tab.c"
+#line 2442 "y.tab.c"
 break;
 case 113:
-#line 661 "parser.y"
+#line 683 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2425 "y.tab.c"
+#line 2447 "y.tab.c"
 break;
 case 114:
-#line 662 "parser.y"
+#line 684 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2430 "y.tab.c"
+#line 2452 "y.tab.c"
 break;
 case 115:
-#line 666 "parser.y"
+#line 688 "parser.y"
 	{
         cur_label++;
         cur_scope++;
@@ -2437,17 +2459,17 @@ case 115:
         push_label(cur_label);
         in_while = 1;
     }
-#line 2441 "y.tab.c"
+#line 2463 "y.tab.c"
 break;
 case 116:
-#line 672 "parser.y"
+#line 694 "parser.y"
 	{
         in_while = 0;
     }
-#line 2448 "y.tab.c"
+#line 2470 "y.tab.c"
 break;
 case 117:
-#line 674 "parser.y"
+#line 696 "parser.y"
 	{  
         int tmp_label = pop_label();
         fprintf(f_asm, "    beq zero, zero, WHILE%d\n", tmp_label);
@@ -2455,31 +2477,33 @@ case 117:
         pop_up_symbol(cur_scope);
         cur_scope--;
     }
-#line 2459 "y.tab.c"
+#line 2481 "y.tab.c"
 break;
 case 118:
-#line 684 "parser.y"
+#line 706 "parser.y"
 	{
         cur_scope++;
         cur_label++;
+        do_flag = 1;
         fprintf(f_asm, "DOWHILE%d:\n", cur_label);
         push_label(cur_label);  
     }
-#line 2469 "y.tab.c"
+#line 2492 "y.tab.c"
 break;
 case 119:
-#line 689 "parser.y"
+#line 712 "parser.y"
 	{ 
         int tmp_label = pop_label();
         fprintf(f_asm, "    beq zero, zero, DOWHILE%d\n", tmp_label);
         fprintf(f_asm, "L%d:\n", tmp_label);
         pop_up_symbol(cur_scope);
         cur_scope--;
+        /*do_flag = 0;*/
     }
-#line 2480 "y.tab.c"
+#line 2504 "y.tab.c"
 break;
 case 120:
-#line 699 "parser.y"
+#line 723 "parser.y"
 	{
         cur_scope++;
         push_label(++cur_label);
@@ -2487,17 +2511,17 @@ case 120:
         in_for=1;
         fprintf(f_asm, "FOR%d:\n", cur_label);
     }
-#line 2491 "y.tab.c"
+#line 2515 "y.tab.c"
 break;
 case 121:
-#line 705 "parser.y"
+#line 729 "parser.y"
 	{
         in_for=0;
     }
-#line 2498 "y.tab.c"
+#line 2522 "y.tab.c"
 break;
 case 122:
-#line 707 "parser.y"
+#line 731 "parser.y"
 	{
         int tmp_label = pop_label();
         int index = look_up_symbol(yystack.l_mark[-12].stringval);
@@ -2511,80 +2535,80 @@ case 122:
         pop_up_symbol(cur_scope);
         cur_scope--;
     }
-#line 2515 "y.tab.c"
-break;
-case 123:
-#line 723 "parser.y"
-	{yyval.stringval =yystack.l_mark[0].stringval;}
-#line 2520 "y.tab.c"
-break;
-case 124:
-#line 724 "parser.y"
-	{yyval.stringval =yystack.l_mark[0].stringval;}
-#line 2525 "y.tab.c"
-break;
-case 125:
-#line 728 "parser.y"
-	{ 
-
-    }
-#line 2532 "y.tab.c"
-break;
-case 126:
-#line 734 "parser.y"
-	{ 
-
-    }
 #line 2539 "y.tab.c"
 break;
-case 127:
-#line 737 "parser.y"
-	{
-
-    }
-#line 2546 "y.tab.c"
+case 123:
+#line 747 "parser.y"
+	{yyval.stringval =yystack.l_mark[0].stringval;}
+#line 2544 "y.tab.c"
 break;
-case 128:
-#line 743 "parser.y"
-	{ 
-
-     }
-#line 2553 "y.tab.c"
+case 124:
+#line 748 "parser.y"
+	{yyval.stringval =yystack.l_mark[0].stringval;}
+#line 2549 "y.tab.c"
 break;
-case 129:
-#line 746 "parser.y"
-	{ 
-       
-     }
-#line 2560 "y.tab.c"
-break;
-case 130:
+case 125:
 #line 752 "parser.y"
 	{ 
 
     }
-#line 2567 "y.tab.c"
+#line 2556 "y.tab.c"
+break;
+case 126:
+#line 758 "parser.y"
+	{ 
+
+    }
+#line 2563 "y.tab.c"
+break;
+case 127:
+#line 761 "parser.y"
+	{
+
+    }
+#line 2570 "y.tab.c"
+break;
+case 128:
+#line 767 "parser.y"
+	{ 
+
+     }
+#line 2577 "y.tab.c"
+break;
+case 129:
+#line 770 "parser.y"
+	{ 
+       
+     }
+#line 2584 "y.tab.c"
+break;
+case 130:
+#line 776 "parser.y"
+	{ 
+
+    }
+#line 2591 "y.tab.c"
 break;
 case 131:
-#line 755 "parser.y"
+#line 779 "parser.y"
 	{ 
 
     }
-#line 2574 "y.tab.c"
+#line 2598 "y.tab.c"
 break;
 case 132:
-#line 758 "parser.y"
+#line 782 "parser.y"
 	{ yyval.stringval = yystack.l_mark[0].stringval;}
-#line 2579 "y.tab.c"
+#line 2603 "y.tab.c"
 break;
 case 133:
-#line 759 "parser.y"
+#line 783 "parser.y"
 	{ 
 
     }
-#line 2586 "y.tab.c"
+#line 2610 "y.tab.c"
 break;
-#line 2588 "y.tab.c"
+#line 2612 "y.tab.c"
     default:
         break;
     }
